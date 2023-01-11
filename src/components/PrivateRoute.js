@@ -1,0 +1,82 @@
+// 用于创建路由(可以根据数据，生成动态的路由)
+import {useRoutes,Navigate} from 'react-router-dom'
+import Login from '../pages/Login'
+import Home from '../pages/Home'
+import Result500 from "./Result/Result500";
+// react 动态加载组件 @loadable/component
+import loadable from '@loadable/component'
+import {observer,inject} from 'mobx-react'
+import Result403 from "./Result/Result403";
+import Result404 from "./Result/Result404";
+import Result401 from "./Result/Result401";
+const PrivateRoute = (props)=>{
+   function bindRouter(list){
+    let arr = [];
+      list.map((item)=>{
+        const ComponentNode = loadable(()=>{
+            return import("./"+item.componentPath)
+        })
+          if(item.menuChilds && item.menuChilds.length>0){
+            if(item.isContainChildren){
+                arr.push({
+                    path:item.pathRoute,
+                    element:<ComponentNode/>,
+                    children:[...bindRouter(item.menuChilds)]
+                })
+            }else{
+                arr.push({
+                    path:item.pathRoute,
+                    //element:<ComponentNode/>
+                    children:[...bindRouter(item.menuChilds)]
+                })
+            }
+           
+          }else{
+          
+            arr.push({
+                path:item.pathRoute,
+                element:<ComponentNode/>
+            })
+          }
+      })
+      return arr;
+   }
+
+   const menuInfo = props.user.userInfo.menuInfo ? props.user.userInfo.menuInfo:[];
+    return useRoutes([
+        {
+            path:"/login",
+            element:<Login/>
+        },
+        {
+            path:"/index",
+            element:<Home />,
+            children:[...bindRouter(menuInfo)]
+        },
+        {
+            path:"/result500",
+            element:<Result500/>
+        },
+        {
+            path:"/result403",
+            element:<Result403/>
+        },
+        {
+            path:"/result404",
+            element:<Result404/>
+        },
+        {
+            path:"/result401",
+            element:<Result401/>
+        },
+        //访问其余路径直接跳转到首页
+        {
+            path:'*',
+            element:<Navigate to={'/login'}/>,
+            key:'1000000'
+
+        }
+    ])
+}
+
+export default inject('user')(observer(PrivateRoute));

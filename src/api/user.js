@@ -1,0 +1,5 @@
+export const USER_LOGIN='/users/login'
+export const USER_USERLIST='/users/userlist'
+export const USER_USERDELERE='/users/userdelete'
+export const USER_USERUPDATE='/users/userupdate'
+export const USER_USERSEARCH='/users/usersearch'
