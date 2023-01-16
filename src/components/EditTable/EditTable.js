@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Form, Input, Space, InputNumber, Popconfirm, Table, Typography, Button} from 'antd';
+import {Form, Input, InputNumber, Popconfirm, Table, Typography} from 'antd';
 import {inject,observer} from "mobx-react";
 
  const originData = [];
@@ -188,7 +188,7 @@ const App = (props) => {
 
     useEffect(() => {
         getInfo()
-    }, []);
+    }, [getInfo]);
     return (
         <Form form={form} component={false}>
             <Table

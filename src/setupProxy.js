@@ -3,7 +3,7 @@ module.exports = function (app) {
     app.use(
 
         createProxyMiddleware('/api',{
-            target: 'http://127.0.0.1:6000',
+            target: 'http://127.0.0.1:6006',
             changeOrigin: true,
             pathRewrite: {
                 '^/api': '',
@@ -11,7 +11,7 @@ module.exports = function (app) {
         }),
         //
         createProxyMiddleware('/dev-api',{
-            target: 'http://127.0.0.1:6000',
+            target: 'http://127.0.0.1:6006',
             changeOrigin: true,
             pathRewrite: {
                 '^/dev-api': '',

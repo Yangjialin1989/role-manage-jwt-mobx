@@ -1,52 +1,144 @@
 import {Component} from 'react'
-import Comment from "../Comment/Comment";
-import {Button} from "antd";
+import {Input, Table, Popconfirm, message, Space,} from 'antd'
 
-//子组件
-function SunA(props){
-    return (<>
-        <div>A</div>
-        <span>{props.B}</span>
-        <Button onClick={()=>props.getSonMsg('子组件的内容')}>传递数据给父</Button>
-    </>)
-}
-//子组件
-function SunB({getSonMsg,getB,child,name,getMsg}){
-    return (<>
-        <div>B</div>
-        <Button onClick={()=>getSonMsg('子组件的内容')}>传递数据给父</Button>
-        <Button onClick={()=>getB('子A组件的内容')}>传递数据给子A</Button>
-    </>)
-}
-
+import {inject,observer} from 'mobx-react'
+import Upload from "../Upload/Upload";
+import UploadAvatar from "../Upload/UploadAvatar";
+const {Search} = Input
 
 class EditUser extends Component{
-    state = {
-        name:'farder name',
-        B:''
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            list:[],
+            columns:[
+                {
+                    title:'任务编码',
+                    dataIndex:'id',
+                    key:'id'
+                },{
+                    title:'注册用户',
+                    dataIndex:'name',
+                    key:'name'
+                },{
+                    title:'邮箱',
+                    dataIndex:'email',
+                    key:'email'
+                },{
+                    title:'电话',
+                    dataIndex:'telephone',
+                    key:'telephone'
+                },{
+                    title:'操作',
+                    dataIndex:'operation',
+                    render: (_, record) =>
+                        this.state.list.length >= 1 ? (
+                            <Popconfirm title="Sure to delete?" onConfirm={()=>this.handleDelete(record.id)}>
+                                <a>删除</a>
+                            </Popconfirm>
+                        ) : null,
+                }
+
+            ]
+        }
     }
-    getMsg = ()=>{
-        console.log('父组件方法')
+    componentDidMount() {
+        this.getInfo()
     }
-    getSonMsg = (sun)=>{
-        console.log(sun)
+    getInfo=()=>{
+        this.props.user.userlist1().then(data=>{
+            this.setState({
+                list:data.data
+            })
+            console.log(data.data)
+        }
+
+
+            )
+
+
     }
-    getB=(B)=>{
-        console.log(B)
-        this.setState({
-            B:B
-        })
+    handleDelete = async (record)=>{
+        console.log(typeof(record))
+        await this.props.user.userdelete({id:record})
+        this.getInfo()
+    }
+
+    onShowSizeChange(current){
+        console.log(current)
+    }
+    onSearch = async(value) => {
+        //console.log('search',value)
+        // let res = await this.props.user.usersearch({name: ''})
+        // if (res.data.length === 0) {
+        //     message.info('没有查询到数据')
+        // } else {
+        //     message.success('查询成功')
+        //     this.setState({
+        //         list: res.data[0]
+        //     })
+        // }
+        if(value === '') {
+            let res = await this.props.user.usersearch({name: ''})
+            if (res.data.length === 0) {
+                message.info('没有查询到数据')
+            } else {
+                //message.success('查询成功')
+                this.setState({
+                    list: res.data[0]
+                })
+            }
+        }else{
+            let res = await this.props.user.usersearch({name: value.trim()})
+            if (res.data.length === 0) {
+                message.info('没有查询到数据')
+            } else {
+                message.success('查询成功')
+                this.setState({
+                    list: res.data
+                })
+            }
+        }
+
+            //console.log(res.data)
+
+
+
+
+    };
+    onChange = (value)=>{
+       //console.log(value)
     }
     render() {
+       // let paginationProps;
+        // paginationProps ={
+        //     current:1,
+        //         pageSize:10,
+        //         total:1000,
+        //         showSizeChanger:this.onShowSizeChange
+        //
+        // }
         return (
             <>
-                <SunA B={this.state.B} getSonMsg={this.getSonMsg} child={<span>121221</span>} name={this.state.name} getMsg={this.getMsg}></SunA>
-                <SunB getB={this.getB} getSonMsg={this.getSonMsg} child={<span>121221</span>} name={this.state.name} getMsg={this.getMsg}></SunB>
+                <h2>角色列表</h2>
 
-                <h2>修改用户</h2>
-                <Comment child={<span>121221</span>} name={this.state.name} getMsg={this.getMsg}></Comment>
+                <Space>
+                    <Upload></Upload>
+
+                </Space>
+                <Space>
+
+                    <UploadAvatar></UploadAvatar>
+                </Space>
+                <Search onChange={this.onChange} allowClear  onSearch={this.onSearch} size={'large'}></Search>
+
+                    <Table pagination={this.paginationProps}  loading={this.state.list.length !== 0 ? false : true} dataSource={this.state.list} columns={this.state.columns}>
+
+                </Table>
+
             </>
         )
     }
 }
-export default EditUser
+export default inject('user')(observer(EditUser))

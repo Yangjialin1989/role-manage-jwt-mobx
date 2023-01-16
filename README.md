@@ -2,6 +2,152 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+```
+1.用户信息表
+{
+        id: 7,
+        name: 'hhh',
+        userHeader: 'Cat.png',
+        RoleId: 1
+    }
+
+2.菜单表
+[{
+        menuId: 1,
+        menuName: '欢迎',
+        menuUrl: 'welecome',
+        pathRoute: 'welecome',
+        componentPath: 'welecome/Welecome',
+        menuImgClass: 'SmileOutlined',
+        pId: 0,
+        menuState: '0',
+        isContainChildren: false,
+        menuChilds: []
+    }, {
+        menuId: 2,
+        menuName: '用户管理',
+        menuUrl: 'index/user',
+        pathRoute: 'user',
+        componentPath: 'user/UserManger',
+        menuImgClass: 'TeamOutlined',
+        pId: 0,
+        menuState: '0',
+        isContainChildren: false,
+        menuChilds: [{
+            menuId: 10,
+            menuName: '用户列表',
+            menuUrl: 'user/userlist',
+            pathRoute: 'userlist',
+            componentPath: 'user/UserList',
+            menuImgClass: 'InsertRowAboveOutlined',
+            pId: 2,
+            menuState: '0',
+            isContainChildren: false,
+            meta:{
+                superAdmin:true
+            },
+            menuChilds: []
+        }, {
+            menuId: 11,
+            menuName: '修改用户',
+            menuUrl: 'user/edituser',
+            pathRoute: 'edituser',
+            componentPath: 'user/EditUser',
+            menuImgClass: 'UserSwitchOutlined',
+            pId: 2,
+            menuState: '0',
+            isContainChildren: false,
+            menuChilds: []
+        }]
+    }, {
+        menuId: 3,
+        menuName: '角色管理',
+        menuUrl: 'index/role',
+        pathRoute: 'role',
+        componentPath: 'role/RoleManger',
+        menuImgClass: 'IdcardOutlined',
+        pId: 0,
+        menuState: '0',
+        isContainChildren: true,
+        menuChilds: [{
+            menuId: 7,
+            menuName: '添加角色',
+            menuUrl: 'role/addrole',
+            pathRoute: 'addrole',
+            componentPath: 'role/AddRole',
+            menuImgClass: 'UserAddOutlined',
+            pId: 2,
+            menuState: '0',
+            isContainChildren: false,
+            menuChilds: []
+        }, {
+            menuId: 8,
+            menuName: '角色详情',
+            menuUrl: 'role/roleinfo',
+            pathRoute: 'roleinfo',
+            componentPath: 'role/RoleInfo',
+            menuImgClass: 'SolutionOutlined',
+            pId: 2,
+            menuState: '0',
+            isContainChildren: false,
+            menuChilds: []
+        }, {
+            menuId: 9,
+            menuName: '角色列表',
+            menuUrl: 'role/rolelist',
+            pathRoute: 'rolelist',
+            componentPath: 'role/RoleList',
+            menuImgClass: 'InsertRowAboveOutlined',
+            pId: 2,
+            menuState: '0',
+            isContainChildren: false,
+            menuChilds: []
+        }]
+    },
+
+    ]
+3.权限表permission
+{
+    apiPath:'/role/update/:roleId',
+    createdAt:'2021-04-09 12:33:15',
+    dataedAt:'',
+    id:5,
+    isMenu:0,
+    method:'DELETE',
+    parentId:3
+    path:'deleteRole',
+    rule:'',
+    title:'删除角色‘,
+    updatedAt:'2021-04-09 12:33:33'
+    
+}
+4.角色表
+
+
+```
+
+
+基本功能
+1.登录 /login    不jwt验证,其他路由全部需要jwt验证
+    服务器返回token，refresh_token , 客户端存储两个token，
+    token 用户数据请求
+    refresh_token用于token过期刷新,返回客户端refresh_token过期时间
+    refresh_token小于60s,提示即将过期，重新登录
+2.登出
+    销毁
+3.用户crud
+4.角色crud
+5.权限crud
+
+
+
+
+
+
+扩展功能： 
+1.用户之间的通信   socket.io https://socket.io/
+
+
 ## Available Scripts
 
 In the project directory, you can run:

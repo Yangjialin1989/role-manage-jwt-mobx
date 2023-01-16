@@ -1,14 +1,47 @@
 import {Component} from 'react'
-import {Input, Table, Popconfirm,message,} from 'antd'
+import {Input, Table, Popconfirm, message, Button,} from 'antd'
 
 import {inject,observer} from 'mobx-react'
-
+import AddRole from "./AddRole";
 const {Search} = Input
 
 class RoleList extends Component{
 
     constructor(props) {
         super(props);
+        this.state = {
+            visibeAddRoleModal:false,
+            list:[],
+            columns:[
+                {
+                    title:'任务编码',
+                    dataIndex:'id',
+                    key:'id'
+                },{
+                    title:'注册用户',
+                    dataIndex:'name',
+                    key:'name'
+                },{
+                    title:'邮箱',
+                    dataIndex:'email',
+                    key:'email'
+                },{
+                    title:'电话',
+                    dataIndex:'telephone',
+                    key:'telephone'
+                },{
+                    title:'操作',
+                    dataIndex:'operation',
+                    render: (_, record) =>
+                        this.state.list.length >= 1 ? (
+                            <Popconfirm title="Sure to delete?" onConfirm={()=>this.handleDelete(record.id)}>
+                                <a>删除</a>
+                            </Popconfirm>
+                        ) : null,
+                }
+
+            ]
+        }
     }
     componentDidMount() {
         this.getInfo()
@@ -18,7 +51,7 @@ class RoleList extends Component{
             this.setState({
                 list:data.data
             })
-            console.log(data.data)
+            //console.log(data.data)
         }
 
 
@@ -27,44 +60,13 @@ class RoleList extends Component{
 
     }
     handleDelete = async (record)=>{
-        console.log(typeof(record))
+        //console.log(typeof(record))
         await this.props.user.userdelete({id:record})
         this.getInfo()
     }
-    state = {
-        list:[],
-        columns:[
-            {
-                title:'任务编码',
-                dataIndex:'id',
-                key:'id'
-            },{
-                title:'注册用户',
-                dataIndex:'name',
-                key:'name'
-            },{
-                title:'邮箱',
-                dataIndex:'email',
-                key:'email'
-            },{
-                title:'电话',
-                dataIndex:'telephone',
-                key:'telephone'
-            },{
-                title:'操作',
-                dataIndex:'operation',
-                render: (_, record) =>
-                    this.state.list.length >= 1 ? (
-                        <Popconfirm title="Sure to delete?" onConfirm={()=>this.handleDelete(record.id)}>
-                            <a>删除</a>
-                        </Popconfirm>
-                    ) : null,
-            }
 
-        ]
-    }
     onShowSizeChange(current){
-        console.log(current)
+        //console.log(current)
     }
     onSearch = async(value) => {
         //console.log('search',value)
@@ -108,18 +110,32 @@ class RoleList extends Component{
     onChange = (value)=>{
        //console.log(value)
     }
+    showAddRoleModal = ()=>{
+        this.setState({
+            visibeAddRoleModal:true
+        })
+    }
+    hideAddRoleModal = ()=>{
+        this.setState({
+            visibeAddRoleModal:false
+        })
+    }
     render() {
-        let paginationProps;
-        paginationProps ={
-            current:1,
-                pageSize:10,
-                total:1000,
-                showSizeChanger:this.onShowSizeChange
-
-        }
+      //  let paginationProps;
+        // paginationProps ={
+        //     current:1,
+        //         pageSize:10,
+        //         total:1000,
+        //         showSizeChanger:this.onShowSizeChange
+        //
+        // }
         return (
             <>
                 <h2>角色列表</h2>
+                <AddRole open={this.state.visibeAddRoleModal}
+                         callback={this.hideAddRoleModal}
+                ></AddRole>
+                <Button onClick={this.showAddRoleModal} type={'primary'}>添加角色</Button>
                 <Search onChange={this.onChange} allowClear  onSearch={this.onSearch} size={'large'}></Search>
 
                     <Table pagination={this.paginationProps}  loading={this.state.list.length !== 0 ? false : true} dataSource={this.state.list} columns={this.state.columns}>

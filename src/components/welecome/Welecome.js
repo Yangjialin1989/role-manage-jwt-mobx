@@ -2,27 +2,27 @@ import React from 'react'
 import styled from 'styled-components'
 import 'animate.css'
 
-const StyleDiv = styled.div`
-  width: ${props => props.width};
-  height: ${props => props.height};
-  background: skyblue;
-  opacity: ${props => props.opacity};
-  animation:animate ease-in-out 20s infinite;
-  @keyframes animate {
-    0%,50%
-    {
-      transform：translateX(-80px);
-    }
-
-  }
-`
+// const StyleDiv = styled.div`
+//   width: ${props => props.width};
+//   height: ${props => props.height};
+//   background: skyblue;
+//   opacity: ${props => props.opacity};
+//   animation:animate ease-in-out 20s infinite;
+//   @keyframes animate {
+//     0%,50%
+//     {
+//       transform：translateX(-80px);
+//     }
+//
+//   }
+// `
 const StyleContainer = styled.div`
-  margin-top:30px;
+  
   box-sizing: border-box;
   position:relative;
   width:100%;
   height:100vh;
-  overflow:hidden;
+  //overflow:hidden;
 `
 const StyleBubbles = styled.div`
 
@@ -31,6 +31,7 @@ const StyleBubbles = styled.div`
 `
 //let i = 10
 const StyleSpan = styled.span`
+  opacity: 0.3;
   position:relative;
   width:30px;
   height:30px;
@@ -112,6 +113,48 @@ const StyleSpan = styled.span`
     0 0 400px #f06645,
     0 0 100px #ff2d75;
     animation: animate 20s linear infinite;
+  }
+  :nth-child(9){
+    background:#ff2d75;
+    box-shadow: 0 0 0 10px #ff2d44,
+    0 0 50px #ff2d75,
+    0 0 100px #f2ddf275;
+    animation: animate 1s linear infinite;
+  }
+  :nth-child(10){
+    background:#012d75;
+    box-shadow: 0 0 0 10px #ff2d44,
+    0 0 50px #f02d75,
+    0 0 100px #dd2d75;
+    animation: animate 2.7s linear infinite;
+  }
+  :nth-child(11){
+    background:#012d75;
+    box-shadow: 0 0 0 10px #af2d44,
+    0 0 50px #f0dd45,
+    0 0 100px #ff2d75;
+    animation: animate 1s linear infinite;
+  }
+  :nth-child(12){
+    background:#012d75;
+    box-shadow: 0 0 0 10px #af2d44,
+    0 0 300px #f066dd,
+    0 0 100px #ff2d75;
+    animation: animate 17s linear infinite;
+  }
+  :nth-child(13){
+    background:#012d75;
+    box-shadow: 0 0 0 10px #af2d44,
+    0 0 300px #f06645,
+    0 0 100px #ff2d75;
+    animation: animate 3s linear infinite;
+  }
+  :nth-child(14){
+    background:#012d75;
+    box-shadow: 0 0 0 10px #af2d44,
+    0 0 400px #f06645,
+    0 0 100px #f22d75;
+    animation: animate 4s linear infinite;
   }
 `
 
@@ -220,19 +263,22 @@ class Welecome extends React.Component{
         //条件渲染，
         return (
             <>
+                <h2 style={{display:"flex",margin:'0 auto'}}>{title}欢迎访问管理系统！</h2>
 
 
-                    <h2>{title}欢迎访问管理系统！</h2>
-                <br/>
-                <br/>
-                <hr/>
+
                 <StyleContainer>
                     <StyleBubbles>
-
+                                <StyleSpan i={12}></StyleSpan>
+                        <StyleSpan i={13}></StyleSpan>
+                        <StyleSpan i={15}></StyleSpan>
+                        <StyleSpan i={60}></StyleSpan>
+                        <StyleSpan i={10}></StyleSpan>
                         <StyleSpan i={12}></StyleSpan>
                         <StyleSpan i={13}></StyleSpan>
                         <StyleSpan i={15}></StyleSpan>
                         <StyleSpan i={60}></StyleSpan>
+                        <StyleSpan i={10}></StyleSpan>
                         <StyleSpan i={10}></StyleSpan>
                         <StyleSpan i={12}></StyleSpan>
                         <StyleSpan i={13}></StyleSpan>

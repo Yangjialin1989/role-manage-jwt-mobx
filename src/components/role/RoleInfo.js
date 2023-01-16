@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from "prop-types";
 import {Button} from "antd";
-
+import MyEditor from '../Editor'
 class Test extends React.Component{
     timer =null
     componentDidMount() {
@@ -23,7 +23,7 @@ function List(prop){
 
     return(
         <div>
-            {prop.name}
+            <MyEditor></MyEditor>
         </div>
     )
 }

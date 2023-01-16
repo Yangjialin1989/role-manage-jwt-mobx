@@ -16,10 +16,11 @@ import './App.css';
 //import {BrowserRouter as Router,useLocation,useNavigate} from "react-router-dom";
 import {HashRouter as Router,useLocation,useNavigate} from "react-router-dom";
 import PrivateRouter from "../components/PrivateRoute";
+import BasicRouter from "../components/BasicRoute";
 import {useEffect} from "react";
 import history from '../utils/history'
-import {message} from "antd";
-import Login from './Login'
+//import {message} from "antd";
+//import Login from './Login'
 import Home from './Home'
 function ToIndex(){
     const navigateTo = useNavigate()
@@ -33,51 +34,36 @@ function ToIndex(){
     },)
     return <Home/>
 }
-function ToLogin(){
-    const navigateTo = useNavigate()
-    useEffect(()=>{
-       // let token = sessionStorage.getItem('token')
 
-        navigateTo('/login')
-        message.warning('您还没有登录，请登录后再访问！')
-    })
-    return <Login/>
-}
+// function ToLogin(){
+//     const navigateTo = useNavigate()
+//     useEffect(()=>{
+//        // let token = sessionStorage.getItem('token')
+//
+//         navigateTo('/login')
+//         message.warning('您还没有登录，请登录后再访问！')
+//     })
+//     return <Login/>
+// }
 
 function BeforeRouterEnter(){
     const location = useLocation()
-    let token = window.localStorage.getItem('token')
-    if(location.pathname === '/login' && token){
+    let token = window.localStorage.getItem('refresh_token')
+    if(location.pathname === '/login' && token && token !== ''){
         return <ToIndex/>
     }
-    if(location.pathname !== '/login' && !token){
-        return <ToLogin/>
+    if(location.pathname !== '/login' && !token ){
+            return <BasicRouter/>
     }
-
-
-
-
     return <PrivateRouter/>
 }
-
-
 function App() {
   return (
       <div>
-
-    <Router history={history}>
-
-        <BeforeRouterEnter></BeforeRouterEnter>
-
-    </Router>
-
-
-
-
-
-
+        <Router history={history}>
+         <BeforeRouterEnter></BeforeRouterEnter>
+        </Router>
       </div>
-
   );
 }
 

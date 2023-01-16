@@ -1,9 +1,9 @@
 import React from 'react'
-import {Dropdown,Button} from "antd";
-import { Cascader, Select } from 'antd';
-import { useEffect, useState } from 'react';
+
+import { Cascader} from 'antd';
+
 import cityList from '../assets/pca-code.json'
-const { Option } = Select;
+//const { Option } = Select;
 
 
 //console.log(cityList)
@@ -23,6 +23,7 @@ function filterCityList(cityList){
                 label:item.name
             })
         }
+        return arr
 
     })
     return arr;
@@ -30,41 +31,7 @@ function filterCityList(cityList){
 
 let options = [...filterCityList(cityList)]
 //console.log(options)
-const options1 = [
-    {
-        value: 'zhejiang',
-        label: 'Zhejiang',
-        children: [
-            {
-                value: 'hangzhou',
-                label: 'Hangzhou',
-                children: [
-                    {
-                        value: 'xihu',
-                        label: 'West Lake',
-                    },
-                ],
-            },
-        ],
-    },
-    {
-        value: 'jiangsu',
-        label: 'Jiangsu',
-        disabled: true,
-        children: [
-            {
-                value: 'nanjing',
-                label: 'Nanjing',
-                children: [
-                    {
-                        value: 'zhonghuamen',
-                        label: 'Zhong Hua Men',
-                    },
-                ],
-            },
-        ],
-    },
-];
+
 const onChange = (value) => {
     //console.log(value);
 };

@@ -3,14 +3,17 @@ import React from 'react';
 import './Welcome.css'
 import {inject,observer} from "mobx-react";
 import EditTable from "../EditTable/EditTable";
+import {Button} from "antd";
 function UserList (props){
 
     return (
         <>
 
 
-                <h2>用户列表</h2>
+
+                <Button type={'primary'}>添加用户</Button>
                 <EditTable></EditTable>
+
 
         </>
     )

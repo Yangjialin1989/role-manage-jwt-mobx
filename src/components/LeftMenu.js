@@ -49,6 +49,7 @@ function LeftMenu(props) {
                     label: <Link to={item.menuUrl}>{item.menuName}</Link>,
                   });
             }
+            return arr
            
         })
         return arr;
@@ -58,8 +59,12 @@ function LeftMenu(props) {
   //const menuInfo = Object.keys(props.user.user).length>0? props.user.user.menuInfo:[];
   //console.log("渲染",props.user.userInfo);
   //console.log("menuInfo",props.user.userInfo.menuInfo);
+    const onSelect=(item)=>{
+        console.log('Menu',item)
+    }
   return (
     <Menu
+        onSelect={onSelect}
     theme="light"
     mode="inline"
     defaultSelectedKeys={['1']}

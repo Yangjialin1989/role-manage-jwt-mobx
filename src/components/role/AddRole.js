@@ -1,108 +1,206 @@
 import React from 'react'
-import {Button} from "antd";
+import {Modal, Form, Input, Button, Space, Tree} from "antd";
+import {inject, observer} from "mobx-react";
 //context 组件通信
-const {Provider,Consumer} = React.createContext()
-function A({children}){
+//const {Provider,Consumer} = React.createContext()
 
-    return (
-        <div>A</div>
-    )
+interface IPropss{
+    open:boolean,
+    callback:()=>void
 }
-function C(props){
-    //const theme = React.useContext(value)
-    return (
 
-            <Consumer>
+const tailLayout = {
+    wrapperCol: {offset: 8, span: 16},
+};
 
-                {value => (
-                    <>
-                        <h2>C</h2>
-
-                        {value.message}
-
-
-                        <hr/>
-                        {value[0].list.map(item=>(
-                            <div style={{display:'flex',height:'40px',lineHeight:'40px',
-                                justifyContent:'space-between'}}>
-                                <h3 style={{width:'50px'}}>{item.name}</h3>
-                                <p style={{width:'40px'}}>{item.price}$</p>
-                                <p style={{width:'180px'}}>{item.info}</p>
-                                <Button onClick={()=>value[1](item.id)}>Delete</Button>
-                            </div>
-                        ))
-
-                        }
-
-                    </>
-                    )}
-           </Consumer>
-
-
-
-    )
-}
-class AddRole extends React.Component{
+class AddRole extends React.Component<IPropss>{
+    formRef = React.createRef();
     constructor(props){
         super(props)
         this.state={
+            treeplist:[],
+            plist:[],
             message:'this is message ',
-            list:[
-                {id:1,name:'苹果',price:18.8,info:'开业大吉，8折扣'},
-                {id:2,name:'香蕉',price:45.5,info:'开业大吉，8折扣'},
-                {id:3,name:'火龙果',price:678.7,info:'开业大吉，8折扣'},
-                {id:4,name:'橘子',price:90.8,info:'开业大吉，8折扣'},
+            treeData:[
+                {
+                    title: 'parent 1',
+                    key: '0-0',
+                    children: [
+                        {
+                            title: 'parent 1-0',
+                            key: '0-0-0',
+                            disabled: true,
+                            children: [
+                                {
+                                    title: 'leaf',
+                                    key: '0-0-0-0',
+                                    disableCheckbox: true,
+                                },
+                                {
+                                    title: 'leaf',
+                                    key: '0-0-0-1',
+                                },
+                            ],
+                        },
+                        {
+                            title: 'parent 1-1',
+                            key: '0-0-1',
+                            children: [
+                                {
+                                    title: (
+                                        <span
+                                            style={{
+                                                color: '#1890ff',
+                                            }}
+                                        >
+                sss
+              </span>
+                                    ),
+                                    key: '0-0-1-0',
+                                },
+                            ],
+                        },
+                    ],
+                },
+                {
+                    title:'parent 2',
+                    key:'1-1'
+                },
+                {
+                    title:'parent 3',
+                    key:'3-3'
+                }
             ]
+
         }
 
     }
-    Delete=(id)=>{
-        console.log(id)
+    filterplist (plist){
+        let arr = []
+        plist.map((item)=>{
+            if(item.child.length>0){
+                //let child = JSON.parse(item.child)
+                arr.push({
+                    title:item.title,
+                    key:item.id,
+                    //children:[...this.filterplist(JSON.parse(item.child))]
+                    children:[...this.filterplist(item.child)]
+
+                })
+            }else{
+
+                arr.push({
+                    title:item.title,
+                    key:item.id
+                })
+            }
+            return arr
+            // arr.push({
+            //     title:item.title,
+            //     key:item.id
+            // })
+
+        })
         this.setState({
-            list:this.state.list.filter(item=>item.id !== id)
+            plist:arr
+        })
+        console.log(arr)
+        return arr
+    }
+    componentDidMount() {
+        this.props.user.userplist(1).then(data=>{
+            this.filterplist(data.data)
+
         })
     }
 
+    cancel = ()=>{
+        this.props.callback()
+    }
+    onFinish = (values) => {
+        console.log('AddRole ---',values)
+    }
+    onFinishFail = (errorInfo) => {
+        console.log('Failed:',errorInfo)
+    }
+    onCheck = (checkedKeys, info) => {
+        this.formRef.current.setFieldsValue({
+            permissionList: checkedKeys.checked
+        })
 
+        console.log(this.state.plist)
+
+
+
+    };
+    onSelect = (selectedKeys, info) => {
+
+        console.log('selected', selectedKeys, info);
+    };
     render() {
-
         return (
+            <>
+                <Modal title={'添加角色'}
+                       open={this.props.open}
+                       onCancel={this.cancel}
+                       footer={null}
+                >
+                    <Form
+                          ref={this.formRef}
+                          name={'AddRole'}
+                          onFinish={this.onFinish}
+                          onFinishFailed={this.onFinishFailed}
+                          autoComplete="off"
+                    >
+                        <Form.Item name={'roleName'} label={'角色名称'}
+                                   rules={[
+                                       {
+                                           type:'string',
+                                           required:true,
+                                           validator:(rule,value)=>{
+                                               if(value === undefined || value === ''){
+                                                   return Promise.reject('角色名称不可以为空')
+                                               }
+                                               if(value.length<2){
+                                                   return Promise.reject('角色长度不可以小于两位')
+                                               }
+                                               return Promise.resolve()
+                                           }
+                                       }
+                                   ]}
+                        >
+                            <Input/>
+                        </Form.Item>
+                        <Form.Item label={'选择权限'}
+                                   name={'permissionList'}
+                        >
+                            <Tree
+                                defaultExpandAll
+                                checkStrictly
+                                showLine
+                                checkable
+                                onCheck={this.onCheck}
+                                treeData={this.state.plist}
+                            />
+                        </Form.Item>
+
+                        <Form.Item {...tailLayout}>
+                            <Space>
+                                <Button type={'primary'} htmlType={'submit'}>
+                                    添加角色
+                                </Button>
+                                <Button type={'default'} htmlType={'reset'}>
+                                    重置
+                                </Button>
+                            </Space>
+
+                        </Form.Item>
+                    </Form>
 
 
-                <Provider value={[this.state,this.Delete]}>
-
-                    {
-                    <div>
-                        <h2>添加角色</h2>
-                        <A></A>
-                        <C>
-
-                        </C>
-
-                        <div>
-                            {this.state.list.map(item=>(
-                                <>
-                                    <hr/>
-                                    <div style={{display:'flex',height:'40px',lineHeight:'40px',
-                                        justifyContent:'space-between'}}>
-                                        <h3 style={{width:'50px'}}>{item.name}</h3>
-                                        <p style={{width:'40px'}}>{item.price}$</p>
-                                        <p style={{width:'180px'}}>{item.info}</p>
-                                        <Button>Delete</Button>
-                                    </div>
-
-                                </>
-
-                            ))}
-
-                        </div>
-
-                    </div> }
-
-                </Provider>
-
-
+                </Modal>
+            </>
         )
     }
 }
-export default AddRole
+export default inject('user')(observer(AddRole))

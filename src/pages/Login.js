@@ -5,8 +5,15 @@ import {useNavigate} from "react-router-dom";
 //inject 注入，observer观察
 import {inject,observer} from 'mobx-react'
 import history from '../utils/history'
+
+
+
 function Login(props) {
     const navigate = useNavigate()
+
+
+
+
     const onFinish = (values) => {
         console.log('Success:', values);
         //后台验证用户名、密码，通过，跳转到首页，失败，提示错误
@@ -14,9 +21,9 @@ function Login(props) {
         props.user.login(values).then((data)=>{
             if(data.code === 200){
                 message.success(data.msg)
-                navigate('/index/welcome')
-                //history.replace('/index/welcome')
-                //window.location.reload()
+               //navigate('/index/welecome')
+               history.replace('/index/welecome')
+               window.location.reload()
             }else{
                 message.warning(data.msg)
                 navigate('/login')

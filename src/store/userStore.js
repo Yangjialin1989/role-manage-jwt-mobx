@@ -8,7 +8,7 @@ class UserStore{
         makeAutoObservable(this)
     }
 
-    userInfo = sessionStorage.getItem('user')?JSON.parse(sessionStorage.getItem('user')):[];
+    userInfo = window.localStorage.getItem('user')?JSON.parse(window.localStorage.getItem('user')):[];
     userList = sessionStorage.getItem('userList')?JSON.stringify(sessionStorage.getItem('userList')):{};
     //userList = sessionStorage.getItem('userList')?sessionStorage.getItem('userList'):[];
 
@@ -28,6 +28,12 @@ class UserStore{
     get userlist(){
         if(sessionStorage.getItem('userlist')){
             return sessionStorage.getItem('userlist');
+        }
+        return {};
+    }
+    get permissionlist(){
+        if(sessionStorage.getItem('user')){
+            return JSON.parse(sessionStorage.getItem('user'));
         }
         return {};
     }
@@ -55,8 +61,39 @@ class UserStore{
                 this.token = data.token;
                 //this.user = data.data;
                 this.userInfo = data.data;
-                sessionStorage.setItem('user',JSON.stringify(data.data));
+               window.localStorage.setItem('user',JSON.stringify(data.data));
                 //返回data，用于前台判断
+                resolve(data)
+            }).catch((err)=>{
+                reject(err)
+            })
+        })
+    }
+    userrefreshtoken=(userInput)=>{
+        //只进行数据处理，不进行界面提示信息，返回Promise对象
+        return new Promise((resolve,reject )=>{
+            //1.发起axios请求
+            service.userService.User_Userrefreshtoken(userInput).then((data)=>{
+                console.log('store - userrefreshtoken',data)
+                this.token = data.token;
+
+               //window.localStorage.setItem('token',data.data);
+                //返回data，用于前台判断
+                resolve(data)
+            }).catch((err)=>{
+                reject(err)
+            })
+        })
+    }
+    useravatar=(userInput)=>{
+        //只进行数据处理，不进行界面提示信息，返回Promise对象
+        return new Promise((resolve,reject )=>{
+            //1.发起axios请求
+            service.userService.User_Useravatar(userInput).then((data)=>{
+                console.log('store - useravatar',data)
+               //window.localStorage.setItem('token',data.data);
+                //返回data，用于前台判断
+                window.localStorage.setItem('avatar',data.data);
                 resolve(data)
             }).catch((err)=>{
                 reject(err)
@@ -73,6 +110,24 @@ class UserStore{
                 //this.user = data.data;
                 //this.userList = data.data;
                 sessionStorage.setItem('userList',JSON.stringify(data.data));
+                //sessionStorage.setItem('userList',data.data);
+                //返回data，用于前台判断
+                resolve(data)
+            }).catch((err)=>{
+                reject(err)
+            })
+        })
+    }
+    userplist=(limit)=>{
+        //只进行数据处理，不进行界面提示信息，返回Promise对象
+        return new Promise((resolve,reject )=>{
+            //1.发起axios请求
+            service.userService.User_Userplist(limit).then((data)=>{
+                //console.log('store - userlist',data.data)
+                //this.token = data.token;
+                //this.user = data.data;
+                //this.userList = data.data;
+                sessionStorage.setItem('userplist',JSON.stringify(data.data));
                 //sessionStorage.setItem('userList',data.data);
                 //返回data，用于前台判断
                 resolve(data)

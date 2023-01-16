@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { message, Upload } from 'antd';
+
 import {inject,observer} from 'mobx-react'
 const getBase64 = (img, callback) => {
     const reader = new FileReader();
@@ -22,18 +23,18 @@ const App = (props) => {
     const [loading, setLoading] = useState(false);
     const [imageUrl, setImageUrl] = useState();
     const handleChange = (info) => {
-        console.log('Upload - handleChange',info)
-        props.upload.upload(info).then((data)=>{
-            if(data.code === 200){
-                message.success(data.msg)
-
-            }else{
-                message.warning(data.msg)
-
-            }
-        }).catch((err)=>{
-            message.error(err)
-        })
+        console.log('Upload - handleChange',info.fileList)
+        // props.upload.upload(info).then((data)=>{
+        //     if(data.code === 200){
+        //         message.success(data.msg)
+        //
+        //     }else{
+        //         message.warning(data.msg)
+        //
+        //     }
+        // }).catch((err)=>{
+        //     message.error(err)
+        // })
         if (info.file.status === 'uploading') {
             setLoading(true);
             return;
@@ -64,7 +65,10 @@ const App = (props) => {
             listType="picture-card"
             className="avatar-uploader"
             showUploadList={true}
-            action="/"
+            action="/api/grids/imgupload"
+            headers={
+                {"Authorization":"Bearer "+localStorage.getItem('token')}
+            }
             beforeUpload={beforeUpload}
             onChange={handleChange}
         >

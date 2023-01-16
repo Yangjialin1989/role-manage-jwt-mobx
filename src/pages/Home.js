@@ -3,7 +3,9 @@ import { useEffect } from 'react'
 import {Layout, Input, Dropdown,message, theme, Button} from 'antd';
 import {UserOutlined,PoweroffOutlined,CopyrightOutlined,QuestionCircleOutlined,GlobalOutlined} from '@ant-design/icons'
 import './Home.css'
-import {useNavigate} from "react-router-dom";
+//import {useNavigate} from "react-router-dom";
+//import history from '../utils/history'
+import cookie from 'react-cookies'
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
@@ -20,7 +22,14 @@ const { Header, Sider, Content,Footer } = Layout;
 const {Search} = Input
 function logout1(){
     window.localStorage.removeItem('token')
+    window.localStorage.removeItem('refresh_token')
     window.localStorage.removeItem('user')
+    window.localStorage.removeItem('status')
+    cookie.remove('exp')
+    cookie.remove('difference')
+
+
+
     //console.log(Home.navigate)
 
 }
@@ -51,18 +60,21 @@ const items = [
 
 
 function Home(){
-    const navigate = useNavigate()
+   // const navigate = useNavigate()
     //组件加载的时候触发
     useEffect(()=>{
+        let user = localStorage.getItem('user')
 
-
-
-    })
+        setAvatar('/api/'+JSON.parse(user).userInfo.avatar)
+        setName(JSON.parse(user).userInfo.name)
+    },[])
 
 
 
 
     const [collapsed, setCollapsed] = useState(false);
+    const [avatar, setAvatar] = useState();
+    const [name, setName] = useState();
     const {
         token: { colorBgContainer },
     } = theme.useToken();
@@ -130,10 +142,10 @@ function Home(){
                             <Button style={{background:'#000',border:'0px',marginBottom:'36px'}}>
                                 <span className={'icon'} >
                                     <span>
-                                <img src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png" alt="avatar"/>
+                                <img style={{borderRadius:'50%'}} src={avatar} alt="avatar"/>
                                </span>
                                 <span className={'name'}>
-                                Serati Ma
+                                {name}
                                 </span>
                                 </span>
 

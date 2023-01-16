@@ -9,10 +9,40 @@ export function User_Login({name,password}){
         })
     })
 }
+//获取用户头像
+export function User_Useravatar(params){
+    return new Promise((resolve, reject)=>{
+        axios.post(api.userApi.USER_USERAVATAR,params).then((res)=>{
+            resolve(res.data)
+        }).catch((err)=>{
+            reject(err)
+        })
+    })
+}
 //获取用户列表
+export function User_Userrefreshtoken(params){
+    return new Promise((resolve, reject)=>{
+        axios.post(api.userApi.USER_USERREFRESHTOKEN,params).then((res)=>{
+            resolve(res.data)
+        }).catch((err)=>{
+            reject(err)
+        })
+    })
+}
+//刷新access_token
 export function User_Userlist(params){
     return new Promise((resolve, reject)=>{
         axios.post(api.userApi.USER_USERLIST,params).then((res)=>{
+            resolve(res.data)
+        }).catch((err)=>{
+            reject(err)
+        })
+    })
+}
+//获取用户权限表单
+export function User_Userplist(params){
+    return new Promise((resolve, reject)=>{
+        axios.post(api.userApi.USER_USERPLIST,params).then((res)=>{
             resolve(res.data)
         }).catch((err)=>{
             reject(err)

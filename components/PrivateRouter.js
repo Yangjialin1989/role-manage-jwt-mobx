@@ -9,9 +9,10 @@ import loadable from '@loadable/component'
 //动态生成路由
 
 // / 默认是登录
-import Login from '../pages/Login'
+import Login from '../../pages/Login'
 import Home from '../pages/Home'
 import {useSelector} from 'react-mobx'
+import Result504 from "../src/components/Result/Result504";
 const PrivateRouter = (props)=>{
     const {user} = useSelector(state => state.userReducer)
     //递归
@@ -61,6 +62,10 @@ const PrivateRouter = (props)=>{
             path:'/index',
             element:<Home/>,
             children:[...bindRouter(menuInfo)]
+        },
+        {
+            path:'/result504',
+            element:<Result504/>
         }
 
     ])

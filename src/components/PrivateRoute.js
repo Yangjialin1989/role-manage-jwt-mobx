@@ -9,6 +9,8 @@ import {observer,inject} from 'mobx-react'
 import Result403 from "./Result/Result403";
 import Result404 from "./Result/Result404";
 import Result401 from "./Result/Result401";
+import Result4011 from "./Result/Result4011";
+import Result504 from "./Result/Result504";
 const PrivateRoute = (props)=>{
    function bindRouter(list){
     let arr = [];
@@ -30,6 +32,7 @@ const PrivateRoute = (props)=>{
                     children:[...bindRouter(item.menuChilds)]
                 })
             }
+            return arr
            
           }else{
           
@@ -42,7 +45,13 @@ const PrivateRoute = (props)=>{
       return arr;
    }
 
-   const menuInfo = props.user.userInfo.menuInfo ? props.user.userInfo.menuInfo:[];
+    //console.log('localstorage menuInfos',JSON.parse(menuInfos))
+   const menuInfo = props.user.userInfo.menuInfo ?props.user.userInfo.menuInfo :[];
+  // const menuInfo = menuInfos? menuInfos:[];
+
+    // if(props.user.userInfo.menuInfo === undefined){
+    //     return
+    // }
     return useRoutes([
         {
             path:"/login",
@@ -68,6 +77,14 @@ const PrivateRoute = (props)=>{
         {
             path:"/result401",
             element:<Result401/>
+        },
+        {
+            path:"/result4011",
+            element:<Result4011/>
+        },
+        {
+            path:"/result504",
+            element:<Result504/>
         },
         //访问其余路径直接跳转到首页
         {

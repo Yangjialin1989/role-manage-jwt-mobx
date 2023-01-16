@@ -5,6 +5,11 @@ import * as IconNode from '@ant-design/icons';
 import {Link} from 'react-router-dom'
 import {useSelector} from "react-mobx";
 
+
+
+
+
+
 function LeftMenu(props){
     //动态生成导航菜单
     //1.拿到mobx走过来的user存储的menuInfo
@@ -38,17 +43,15 @@ function LeftMenu(props){
                     }
                 )
             }
-
-
         })
-
-
         console.log(arr)
         return arr
     }
     //const menuInfo = Object.keys(props.user.user).length > 0 ? props.user.user.menuInfo:[];
+
     return(
         <Menu
+
             theme="light"
             mode="inline"
             defaultSelectedKeys={['1']}
