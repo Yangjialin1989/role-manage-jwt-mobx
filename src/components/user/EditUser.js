@@ -4,6 +4,7 @@ import {Input, Table, Popconfirm, message, Space,} from 'antd'
 import {inject,observer} from 'mobx-react'
 import Upload from "../Upload/Upload";
 import UploadAvatar from "../Upload/UploadAvatar";
+import Tour from "../Tour/Tour";
 const {Search} = Input
 
 class EditUser extends Component{
@@ -51,7 +52,7 @@ class EditUser extends Component{
             this.setState({
                 list:data.data
             })
-            console.log(data.data)
+           // console.log(data.data)
         }
 
 
@@ -136,6 +137,7 @@ class EditUser extends Component{
                     <Table pagination={this.paginationProps}  loading={this.state.list.length !== 0 ? false : true} dataSource={this.state.list} columns={this.state.columns}>
 
                 </Table>
+                <Tour></Tour>
 
             </>
         )

@@ -3,6 +3,7 @@ import {Input, Table, Popconfirm, message, Button,} from 'antd'
 
 import {inject,observer} from 'mobx-react'
 import AddRole from "./AddRole";
+import EditTable1 from "../EditTable/EditTable1";
 const {Search} = Input
 
 class RoleList extends Component{
@@ -14,21 +15,17 @@ class RoleList extends Component{
             list:[],
             columns:[
                 {
-                    title:'任务编码',
-                    dataIndex:'id',
-                    key:'id'
+                    title:'权限名称',
+                    dataIndex:'roleName',
+                    key:'roleName'
                 },{
-                    title:'注册用户',
-                    dataIndex:'name',
-                    key:'name'
+                    title:'权限列表',
+                    dataIndex:'permissionList',
+                    key:'permissionList'
                 },{
-                    title:'邮箱',
-                    dataIndex:'email',
-                    key:'email'
-                },{
-                    title:'电话',
-                    dataIndex:'telephone',
-                    key:'telephone'
+                    title:'创建日期',
+                    dataIndex:'createdAt',
+                    key:'createdAt'
                 },{
                     title:'操作',
                     dataIndex:'operation',
@@ -47,7 +44,7 @@ class RoleList extends Component{
         this.getInfo()
     }
     getInfo=()=>{
-        this.props.user.userlist1().then(data=>{
+        this.props.user.userpl().then(data=>{
             this.setState({
                 list:data.data
             })
@@ -115,7 +112,10 @@ class RoleList extends Component{
             visibeAddRoleModal:true
         })
     }
-    hideAddRoleModal = ()=>{
+    hideAddRoleModal = (refresh?:boolean)=>{
+        if(refresh){
+            this.getRoleList()
+        }
         this.setState({
             visibeAddRoleModal:false
         })
@@ -141,6 +141,7 @@ class RoleList extends Component{
                     <Table pagination={this.paginationProps}  loading={this.state.list.length !== 0 ? false : true} dataSource={this.state.list} columns={this.state.columns}>
 
                 </Table>
+                <EditTable1></EditTable1>
 
             </>
         )

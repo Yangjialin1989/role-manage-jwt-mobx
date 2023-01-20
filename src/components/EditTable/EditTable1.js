@@ -51,34 +51,34 @@ const App = (props) => {
     const [form] = Form.useForm();
     const [data, setData] = useState(originData);
     const [editingKey, setEditingKey] = useState('');
-    const isEditing = (record) => record.id === editingKey;
+    const isEditing = (record) => record._id === editingKey;
     const edit = (record) => {
         form.setFieldsValue({
-            name: '',
-            email: '',
-            telephone: '',
+            roleName: '',
+            permissionList: '',
+            updatedAt: new Date(),
             ...record,
         });
-        setEditingKey(record.id);
+        setEditingKey(record._id);
     };
     const cancel = () => {
         setEditingKey('');
     };
     const handleDelete = async (record)=>{
         //console.log(typeof(record),record)
-        await props.user.userdelete({id:record})
+        await props.user.userdelete({_id:record})
         getInfo()
     }
     const save = async (record) => {
         try {
             const row = await form.validateFields();
-            row.id = record.id;
+            row.id = record._id;
             console.log(row)
             await props.user.userupdate(row).then(data=>setData(data.data))
 
 
             const newData = [...data];
-            const index = newData.findIndex((item) => record.id === item.id);
+            const index = newData.findIndex((item) => record._id === item._id);
             if (index > -1) {
                 const item = newData[index];
                 newData.splice(index, 1, {
@@ -99,26 +99,51 @@ const App = (props) => {
     };
     const columns = [
         {
-            title: 'name',
-            dataIndex: 'name',
-            width: '25%',
+            title: '唯一标识',
+            dataIndex: '_id',
+           // key: 'roleName',
+            width: '15%',
+            editable: false,
+        },
+        {
+            title: '权限名称',
+            dataIndex: 'roleName',
+           // key: 'roleName',
+            width: '15%',
             editable: true,
         },
         {
-            title: 'email',
-            dataIndex: 'email',
-            width: '30%',
+            title: '权限列表',
+            dataIndex: 'permissionList',
+            //key: 'permissionList',
+            width: '15%',
             editable: true,
         },
         {
-            title: 'telephone',
-            dataIndex: 'telephone',
-            width: '30%',
-            editable: true,
+            title: '创建日期',
+            dataIndex: 'createdAt',
+           // key: 'createdAt',
+            width: '10%',
+            editable: false,
+        },
+        {
+            title: '更新日期',
+            dataIndex: 'updatedAt',
+           // key: 'createdAt',
+            width: '10%',
+            editable: false,
+        },
+        {
+            title: '销毁日期',
+            dataIndex: 'deletedAt',
+           // key: 'createdAt',
+            width: '10%',
+            editable: false,
         },
         {
             title: 'operation',
             dataIndex: 'operation',
+            //key:'_id',
             render: (_, record) => {
                 const editable = isEditing(record);
                 return editable ? (
@@ -146,7 +171,7 @@ const App = (props) => {
                         <a>编辑</a>
                     </Typography.Link>
                     <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                    <Popconfirm  title="数据无价，您确定删除?" onConfirm={()=>handleDelete(record.id)} >
+                    <Popconfirm  title="数据无价，您确定删除?" onConfirm={()=>handleDelete(record._id)} >
                     <a style={{color:'red'}}>删除</a>
                     </Popconfirm>
                     </span>
@@ -170,7 +195,7 @@ const App = (props) => {
             ...col,
             onCell: (record) => ({
                 record,
-                inputType: col.dataIndex === 'telephone' ? 'number' : 'text',
+                //inputType: col.dataIndex === 'telephone' ? 'number' : 'text',
                 dataIndex: col.dataIndex,
                 title: col.title,
                 editing: isEditing(record),
@@ -178,7 +203,12 @@ const App = (props) => {
         };
     });
     const getInfo=()=>{
-        props.user.userlist1().then(data=>setData(data.data))
+        props.user.userpl().then(data=>{
+            setData(data.data)
+            console.log(data)
+        }
+
+        )
 
 
 

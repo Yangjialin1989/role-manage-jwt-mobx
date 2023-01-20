@@ -55,17 +55,17 @@ axios.interceptors.response.use(
             let difference = cookie.load('difference')
             let exp = cookie.load('exp')
             let now = Date.parse(new Date())/1000
-            console.log('refresh_token过期时间',new Date(parseInt(exp)*1000))
-            console.log('token剩余时间',difference,Date.parse(new Date())/1000)
+            //console.log('refresh_token过期时间',new Date(parseInt(exp)*1000))
+           // console.log('token剩余时间',difference,Date.parse(new Date())/1000)
 
-                console.log('result',parseInt(exp)-now)
+               // console.log('result',parseInt(exp)-now)
 
 
             //刷新了token
             if(exp){
                 if(parseInt(exp)-Date.parse(new Date())/1000<60){
                     let res = parseInt(exp)-Date.parse(new Date())/1000
-                    console.log('令牌即将过期，请先保存好内容，重新登录。')
+                   // console.log('令牌即将过期，请先保存好内容，重新登录。')
 
                    // window.localStorage.removeItem('refresh_token');
                    // window.localStorage.removeItem('token');
@@ -86,7 +86,7 @@ axios.interceptors.response.use(
                                 if (data.data.code === 100) {
                                 } else {
                                     flag = false
-                                    console.log('刷新的最新token 120s', data.data.token);
+                                  //  console.log('刷新的最新token 120s', data.data.token);
 
                                     window.localStorage.setItem('token', data.data.token)
                                 }
@@ -110,7 +110,7 @@ axios.interceptors.response.use(
                             if(data.data.code === 100){
                             }else{
                                 flag = false
-                                console.log('刷新的最新token 120s',data.data.token);
+                               // console.log('刷新的最新token 120s',data.data.token);
 
                                 window.localStorage.setItem('token',data.data.token)
                             }
@@ -176,7 +176,7 @@ axios.interceptors.response.use(
         }
     },
     error=>{
-        console.log(error)
+       // console.log(error)
         if(error.response.status){
             switch (error.response.status){
                 case 500:
@@ -197,7 +197,7 @@ axios.interceptors.response.use(
                 break;
                 //404网络请求不存在
                 case 404:
-                    console.log('404')
+                   // console.log('404')
                     setTimeout(()=>{
                         history.replace('/result404')
                         history.go(0)

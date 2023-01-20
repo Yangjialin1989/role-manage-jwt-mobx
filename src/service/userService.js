@@ -9,6 +9,46 @@ export function User_Login({name,password}){
         })
     })
 }
+//注册的时候用户名验证
+export function User_Uservalid(params){
+    return new Promise((resolve, reject)=>{
+        axios.post(api.userApi.USER_USERVALID,params).then((res)=>{
+            resolve(res.data)
+        }).catch((err)=>{
+            reject(err)
+        })
+    })
+}
+//添加角色
+export function User_Userps(params){
+    return new Promise((resolve, reject)=>{
+        axios.post(api.userApi.USER_USERPS,params).then((res)=>{
+            resolve(res.data)
+        }).catch((err)=>{
+            reject(err)
+        })
+    })
+}
+//查询角色
+export function User_Userpl(params){
+    return new Promise((resolve, reject)=>{
+        axios.post(api.userApi.USER_USERPL,params).then((res)=>{
+            resolve(res.data)
+        }).catch((err)=>{
+            reject(err)
+        })
+    })
+}
+//注册户名
+export function User_Userregister(params){
+    return new Promise((resolve, reject)=>{
+        axios.post(api.userApi.USER_USERREGISTER,params).then((res)=>{
+            resolve(res.data)
+        }).catch((err)=>{
+            reject(err)
+        })
+    })
+}
 //获取用户头像
 export function User_Useravatar(params){
     return new Promise((resolve, reject)=>{

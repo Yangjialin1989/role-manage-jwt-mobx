@@ -1,22 +1,31 @@
-import React from 'react'
+import React, {createRef} from 'react'
 import {Modal, Form, Input, Button, Space, Tree} from "antd";
 import {inject, observer} from "mobx-react";
+import {RefObject} from "react";
 //context 组件通信
 //const {Provider,Consumer} = React.createContext()
 
 interface IPropss{
     open:boolean,
-    callback:()=>void
+    callback:(refresh?:boolean)=>void
+}
+interface IPermission{
+
 }
 
 const tailLayout = {
     wrapperCol: {offset: 8, span: 16},
 };
 
+
+
+
+
 class AddRole extends React.Component<IPropss>{
-    formRef = React.createRef();
+    formRef:RefObject
     constructor(props){
         super(props)
+        this.formRef = createRef();
         this.state={
             treeplist:[],
             plist:[],
@@ -107,11 +116,76 @@ class AddRole extends React.Component<IPropss>{
         console.log(arr)
         return arr
     }
+    filterlists =(permissionList,id:number=0)=>{
+       console.log(permissionList)
+        let plist = []
+
+       permissionList.map((item)=>{
+
+           if(item.parentId === id){
+               // console.log(item)
+               // console.log(item.child)
+               let children=[]
+               item.child.map((child)=>{
+                  // console.log('child',child)
+                   children.push({
+                       title:child.title,
+                       key:child.id,
+                       children:child.child
+                   })
+               })
+               plist.push({
+                   title:item.title,
+                   key:item.id,
+                   children:children
+               })
+
+           }
+
+           //console.log(plist)
+       })
+
+
+       return plist
+
+        // this.setState({
+        //     plist:plist
+        // })
+
+    }
+
+    generatePermissionList =(permissionList,parentId:number=0)=>{
+        let pplist = []
+        permissionList.forEach(permission=>{
+            if(permission.parentId === parentId){
+                //核心代码。
+                permission.child = this.generatePermissionList(permission.child,permission.id)
+                pplist.push({
+                    title:permission.title,
+                    key:permission.id,
+                    children:permission.child
+                })
+            }
+        })
+        console.log(pplist)
+        return pplist
+    }
+
+
+
     componentDidMount() {
-        this.props.user.userplist(1).then(data=>{
-            this.filterplist(data.data)
+        this.props.user.userplist().then(data=>{
+            //this.filterplist(data.data)
+            console.log('userplist',data.data)
+            this.setState({
+                plist:this.generatePermissionList(data.data)
+
+            })
 
         })
+        let lists = window.localStorage.getItem('user')
+        console.log('tree',JSON.parse(lists).permissionInfo)
+
     }
 
     cancel = ()=>{
@@ -119,20 +193,31 @@ class AddRole extends React.Component<IPropss>{
     }
     onFinish = (values) => {
         console.log('AddRole ---',values)
+        this.props.user.userps(values).then(data=>{
+            console.log(data)
+        })
     }
     onFinishFail = (errorInfo) => {
         console.log('Failed:',errorInfo)
+
     }
-    onCheck = (checkedKeys, info) => {
+    onCheck = (checkedKeys, selectedkeys, info) => {
+        console.log('checkedKeys',checkedKeys,selectedkeys)
         this.formRef.current.setFieldsValue({
             permissionList: checkedKeys.checked
         })
-
-        console.log(this.state.plist)
-
-
-
+        this.plist.map((item)=>{
+            if(item.key<100 && item.key === checkedKeys){
+                //item.children.key
+            }
+        })
+        //console.log(this.state.plist)
     };
+    addRole = () =>{
+
+    }
+
+
     onSelect = (selectedKeys, info) => {
 
         console.log('selected', selectedKeys, info);
@@ -151,6 +236,10 @@ class AddRole extends React.Component<IPropss>{
                           onFinish={this.onFinish}
                           onFinishFailed={this.onFinishFailed}
                           autoComplete="off"
+                          initialValues={{
+                              roleName:'',
+                              permissionList:[]
+                          }}
                     >
                         <Form.Item name={'roleName'} label={'角色名称'}
                                    rules={[

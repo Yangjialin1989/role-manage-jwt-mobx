@@ -1,7 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
 import 'animate.css'
-
+import {Watermark ,Calendar} from 'antd'
+import Calendar1 from "../Calendar/Calendar";
 // const StyleDiv = styled.div`
 //   width: ${props => props.width};
 //   height: ${props => props.height};
@@ -217,7 +218,7 @@ class Welecome extends React.Component{
     trigger = (e,msg)=>{
         //阻止默认事件
          //e.preventDefault(); 阻止了a 的 href跳转功能
-        console.log(msg)
+        //console.log(msg)
         e.preventDefault()
         //console.log('trigger')
     }
@@ -237,14 +238,14 @@ class Welecome extends React.Component{
 
     }
     handler(){
-        console.log(this)
+       // console.log(this)
         this.setState({
             //修改state中的array数组
             list:this.state.list.filter(item=>item !==2)
         })
     }
     handler1(){
-        console.log(this)
+       // console.log(this)
 
         this.setState({
             //修改state中的array数据
@@ -258,14 +259,17 @@ class Welecome extends React.Component{
             }
         })
     }
+    onPanelChange = (value, mode) => {
+        //console.log(value.format('YYYY-MM-DD'), mode);
+    };
     //类渲染----------------------------------------------------------------------
     render() {
         //条件渲染，
         return (
-            <>
+            <Watermark content="专属管理系统">
                 <h2 style={{display:"flex",margin:'0 auto'}}>{title}欢迎访问管理系统！</h2>
 
-
+                <Calendar1 style={{marginTop:'10px'}}></Calendar1>
 
                 <StyleContainer>
                     <StyleBubbles>
@@ -293,7 +297,8 @@ class Welecome extends React.Component{
 
 
 
-            </>
+
+            </Watermark>
         )
 
         }

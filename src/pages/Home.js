@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState,useRef } from 'react';
 import { useEffect } from 'react'
-import {Layout, Input, Dropdown,message, theme, Button} from 'antd';
+import {Layout, Input, Dropdown, message, Divider, Space, Tour, theme, Button, Modal} from 'antd';
 import {UserOutlined,PoweroffOutlined,CopyrightOutlined,QuestionCircleOutlined,GlobalOutlined} from '@ant-design/icons'
 import './Home.css'
-//import {useNavigate} from "react-router-dom";
-//import history from '../utils/history'
+import { EllipsisOutlined } from '@ant-design/icons';
 import cookie from 'react-cookies'
 import {
     MenuFoldOutlined,
@@ -15,6 +14,7 @@ import {
 import LeftMenu from "../components/LeftMenu";
 //Outlet 站位
 import {Outlet} from 'react-router-dom'
+//import {history} from '../utils/history'
 
 
 
@@ -33,33 +33,57 @@ function logout1(){
     //console.log(Home.navigate)
 
 }
-function personal(){
-    message.info('该功能处于开发阶段，工程师真正努力中。')
-}
-const items = [
-    {
-        key: '1',
-        label: (
-            <span onClick={personal}>
+
+
+
+
+
+
+function Home(props){
+    const ref1 = useRef(null);
+    const ref2 = useRef(null);
+    const [open, setOpen] = useState(false);
+    const steps = [
+        {
+            title: '搜索功能',
+            description: '可以输入用户名，邮箱文章名称等关键字，进行查询',
+            cover: (
+                <img
+                    alt="tour.png"
+                    src="https://user-images.githubusercontent.com/5378891/197385811-55df8480-7ff4-44bd-9d43-a7dade598d70.png"
+                />
+            ),
+            target: () => ref1.current,
+        },
+        {
+            title: '登出功能',
+            description: '登出功能',
+            target: () => ref2.current,
+        }
+    ];
+    function personal(){
+        setIsModalOpen(true);
+        message.info('该功能处于开发阶段，工程师真正努力中。')
+    }
+    const items = [
+        {
+            key: '1',
+            label: (
+                <span onClick={personal}>
                 <span>&nbsp;&nbsp;&nbsp;&nbsp;</span><UserOutlined /><span>&nbsp;&nbsp;</span><span>个人中心</span>
             </span>
-        ),
-    },
-    {
-        key: '2',
-        label: (
-            <span onClick={logout1}>
+            ),
+        },
+        {
+            key: '2',
+            label: (
+                <span onClick={logout1}>
                 <a href="/"><span>&nbsp;&nbsp;&nbsp;&nbsp;</span><PoweroffOutlined /><span>&nbsp;&nbsp;</span><span>退出登录</span></a>
             </span>
 
-        ),
-    }
-];
-
-
-
-
-function Home(){
+            ),
+        }
+    ];
    // const navigate = useNavigate()
     //组件加载的时候触发
     useEffect(()=>{
@@ -67,6 +91,7 @@ function Home(){
 
         setAvatar('/api/'+JSON.parse(user).userInfo.avatar)
         setName(JSON.parse(user).userInfo.name)
+        //setOpen(true)
     },[])
 
 
@@ -78,7 +103,20 @@ function Home(){
     const {
         token: { colorBgContainer },
     } = theme.useToken();
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+    const handleOk = () => {
+        setIsModalOpen(false);
+    };
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    };
+
     return (
+        <>
         <Layout>
 
             <Header className="header">
@@ -117,7 +155,7 @@ function Home(){
                     <div className={'ant-space-item'}>
                             <span className={'icon1'}>
 
-                                    <Search size={'small'} style={{marginTop:'20px',display:"flex"}}></Search>
+                                    <Search ref={ref1} size={'small'} style={{marginTop:'20px',display:"flex"}}></Search>
 
 
                             </span>
@@ -139,7 +177,7 @@ function Home(){
                             overlayStyle={{paddingTop:'30px'}}
 
                         >
-                            <Button style={{background:'#000',border:'0px',marginBottom:'36px'}}>
+                            <Button ref={ref2} style={{background:'#000',border:'0px',marginBottom:'36px'}}>
                                 <span className={'icon'} >
                                     <span>
                                 <img style={{borderRadius:'50%'}} src={avatar} alt="avatar"/>
@@ -180,7 +218,7 @@ function Home(){
                         onClick: () => setCollapsed(!collapsed),
                     })}
                 </Header>
-                <Content
+                  <Content
                     style={{
                         margin: '24px 16px 106px 16px',
                         padding: 24,
@@ -204,7 +242,12 @@ function Home(){
 
             </Footer>
         </Layout>
-
+            <Modal title="Basic Modal"  onOk={handleOk} onCancel={handleCancel}>
+                <p>Some contents...</p>
+                <p>Some contents...</p>
+                <p>Some contents...</p>
+            </Modal>
+                </>
     );
 }
 export default Home

@@ -60,7 +60,7 @@ function LeftMenu(props) {
   //console.log("渲染",props.user.userInfo);
   //console.log("menuInfo",props.user.userInfo.menuInfo);
     const onSelect=(item)=>{
-        console.log('Menu',item)
+       // console.log('Menu',item)
     }
   return (
     <Menu

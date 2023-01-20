@@ -57,7 +57,7 @@ class UserStore{
         return new Promise((resolve,reject )=>{
             //1.发起axios请求
             service.userService.User_Login(userInput).then((data)=>{
-                console.log('store - login',data)
+               // console.log('store - login',data)
                 this.token = data.token;
                 //this.user = data.data;
                 this.userInfo = data.data;
@@ -74,7 +74,7 @@ class UserStore{
         return new Promise((resolve,reject )=>{
             //1.发起axios请求
             service.userService.User_Userrefreshtoken(userInput).then((data)=>{
-                console.log('store - userrefreshtoken',data)
+                //console.log('store - userrefreshtoken',data)
                 this.token = data.token;
 
                //window.localStorage.setItem('token',data.data);
@@ -90,10 +90,70 @@ class UserStore{
         return new Promise((resolve,reject )=>{
             //1.发起axios请求
             service.userService.User_Useravatar(userInput).then((data)=>{
-                console.log('store - useravatar',data)
+                //console.log('store - useravatar',data)
                //window.localStorage.setItem('token',data.data);
                 //返回data，用于前台判断
                 window.localStorage.setItem('avatar',data.data);
+                resolve(data)
+            }).catch((err)=>{
+                reject(err)
+            })
+        })
+    }
+    userregister=(userInput)=>{
+        //只进行数据处理，不进行界面提示信息，返回Promise对象
+        return new Promise((resolve,reject )=>{
+            //1.发起axios请求
+            service.userService.User_Userregister(userInput).then((data)=>{
+                //console.log('store - userregister',data)
+               //window.localStorage.setItem('token',data.data);
+                //返回data，用于前台判断
+                //window.localStorage.setItem('avatar',data.data);
+                resolve(data)
+            }).catch((err)=>{
+                reject(err)
+            })
+        })
+    }
+    userps=(userInput)=>{
+        //只进行数据处理，不进行界面提示信息，返回Promise对象
+        return new Promise((resolve,reject )=>{
+            //1.发起axios请求
+            service.userService.User_Userps(userInput).then((data)=>{
+                //console.log('store - userps',data)
+               //window.localStorage.setItem('token',data.data);
+                //返回data，用于前台判断
+                //window.localStorage.setItem('avatar',data.data);
+                resolve(data)
+            }).catch((err)=>{
+                reject(err)
+            })
+        })
+    }
+    userpl=(userInput)=>{
+        //只进行数据处理，不进行界面提示信息，返回Promise对象
+        return new Promise((resolve,reject )=>{
+            //1.发起axios请求
+            service.userService.User_Userpl(userInput).then((data)=>{
+                console.log('store - userpl',data)
+               //window.localStorage.setItem('token',data.data);
+                //返回data，用于前台判断
+                //window.localStorage.setItem('avatar',data.data);
+                resolve(data)
+            }).catch((err)=>{
+                reject(err)
+            })
+        })
+    }
+    uservalid=(userInput)=>{
+        //只进行数据处理，不进行界面提示信息，返回Promise对象
+        return new Promise((resolve,reject )=>{
+            //1.发起axios请求
+            service.userService.User_Uservalid(userInput).then((data)=>{
+                console.log('store - uservalid',data)
+               //window.localStorage.setItem('token',data.data);
+                //返回data，用于前台判断
+                //window.localStorage.setItem('avatar',data.data);
                 resolve(data)
             }).catch((err)=>{
                 reject(err)
