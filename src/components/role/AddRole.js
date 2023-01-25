@@ -189,12 +189,22 @@ class AddRole extends React.Component<IPropss>{
     }
 
     cancel = ()=>{
-        this.props.callback()
+        this.props.callback(true)
     }
     onFinish = (values) => {
-        console.log('AddRole ---',values)
-        this.props.user.userps(values).then(data=>{
+       // values.push({id:new Date().valueOf()})
+        let values1 = {
+            'permissionList':values.permissionList,
+           'roleName':values.roleName,
+            'id':new Date().valueOf()
+        }
+        console.log('AddRole ---',values1)
+        this.props.user.userps(values1).then(data=>{
             console.log(data)
+            this.cancel()
+            window.location.reload()
+
+
         })
     }
     onFinishFail = (errorInfo) => {

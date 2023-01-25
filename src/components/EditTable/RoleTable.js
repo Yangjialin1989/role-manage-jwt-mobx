@@ -66,8 +66,8 @@ const App = (props) => {
     };
     const handleDelete = async (record)=>{
         //console.log(typeof(record),record)
-        await props.user.userdelete({id:record})
-        getInfo()
+        await props.admin.admindelete({id:record})
+        getAdminList()
     }
     const save = async (record) => {
         try {
@@ -99,25 +99,25 @@ const App = (props) => {
     };
     const columns = [
         {
-            title: 'name',
+            title: '管理员',
             dataIndex: 'name',
             width: '25%',
             editable: true,
         },
         {
-            title: 'email',
+            title: '邮箱',
             dataIndex: 'email',
             width: '30%',
             editable: true,
         },
         {
-            title: 'telephone',
+            title: '电话',
             dataIndex: 'telephone',
             width: '30%',
             editable: true,
         },
         {
-            title: 'operation',
+            title: '操作',
             dataIndex: 'operation',
             render: (_, record) => {
                 const editable = isEditing(record);
@@ -177,8 +177,8 @@ const App = (props) => {
             }),
         };
     });
-    const getInfo=()=>{
-        props.user.userlist1().then(data=>setData(data.data))
+    const getAdminList=()=>{
+        props.admin.adminlist(1).then(data=>setData(data.data))
 
 
 
@@ -187,7 +187,7 @@ const App = (props) => {
     }
 
     useEffect(() => {
-        getInfo()
+        getAdminList()
     }, []);
     const onSearch = async(value) => {
         //console.log('search',value)
@@ -244,4 +244,4 @@ const App = (props) => {
         </Form>
     );
 };
-export default inject('user')(observer(App)) ;
+export default inject('admin')(observer(App)) ;

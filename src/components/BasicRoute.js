@@ -83,4 +83,4 @@ const PrivateRoute = (props)=>{
     ])
 }
 
-export default inject('user')(observer(PrivateRoute));
+export default inject('user','admin')(observer(PrivateRoute));

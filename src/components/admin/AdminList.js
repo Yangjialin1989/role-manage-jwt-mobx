@@ -2,10 +2,11 @@
 import React, { useState } from 'react';
 import './Welcome.css'
 import {inject,observer} from "mobx-react";
-import UserTable from "../EditTable/UserTable";
+import AdminTable from "../EditTable/AdminTable";
 import {Button, Modal, Form, Input, Space,message} from "antd";
 import Tree from '../Tree/Tree'
-function UserList (props){
+function AdminList (props){
+   // const [limit,setLimit]=useState(1)
     const [form] = Form.useForm()
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -21,10 +22,11 @@ function UserList (props){
         setIsModalOpen(false);
     };
     const onFinish = async(values)=>{
-        let {code,msg} = await props.user.userregister(values)
+        let {code,msg} = await props.admin.adminregister(values)
         if(code === 200){
             message.success(msg)
             form.resetFields();
+            window.location.reload();
         }
         if(code === 101){message.error(msg)}
     }
@@ -42,7 +44,7 @@ function UserList (props){
         <>
 
 
-            <Modal title="添加用户" open={isModalOpen} footer={null}  onCancel={handleCancel}>
+            <Modal title="添加管理员" open={isModalOpen} footer={null}  onCancel={handleCancel}>
                 <Form
                     labelCol={{
                         span: 4,
@@ -50,14 +52,13 @@ function UserList (props){
                     wrapperCol={{
                         span: 20,
                     }}
-
                     form={form}
                     name={'registUser'}
                     onFinish={onFinish}
                     onFinishFailed={onFinishFailed}
                         >
                     <Form.Item
-                        label="用户名"
+                        label="管理员名"
                         name="name"
 
                         rules={[
@@ -70,7 +71,7 @@ function UserList (props){
                             ({ getFieldValue }) => ({
                                 async validator(rule, value) {
                                     let name = getFieldValue('name')
-                                    let {code,msg} =  await props.user.uservalid({name})
+                                    let {code,msg} =  await props.admin.adminvalid({name})
                                     if(code === 300){
                                         return Promise.resolve()
                                     }else if(code === 102){
@@ -134,13 +135,13 @@ function UserList (props){
                 </Form>
             </Modal>
 
-                <Button type={'primary'} onClick={showModal}>添加用户</Button>
+                <Button type={'primary'} onClick={showModal}>添加管理员</Button>
 <hr/>
-            <UserTable></UserTable>
+            <AdminTable></AdminTable>
 
 
         </>
     )
 
 }
-export default inject('user')(observer(UserList))
+export default inject('admin','user')(observer(AdminList))

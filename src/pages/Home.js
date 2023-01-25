@@ -23,7 +23,7 @@ const {Search} = Input
 function logout1(){
     window.localStorage.removeItem('token')
     window.localStorage.removeItem('refresh_token')
-    window.localStorage.removeItem('user')
+    window.localStorage.removeItem('admin')
     window.localStorage.removeItem('status')
     cookie.remove('exp')
     cookie.remove('difference')
@@ -87,10 +87,10 @@ function Home(props){
    // const navigate = useNavigate()
     //组件加载的时候触发
     useEffect(()=>{
-        let user = localStorage.getItem('user')
+        let admin = localStorage.getItem('admin')
 
-        setAvatar('/api/'+JSON.parse(user).userInfo.avatar)
-        setName(JSON.parse(user).userInfo.name)
+        setAvatar('/api/'+JSON.parse(admin).userInfo.avatar)
+        setName(JSON.parse(admin).userInfo.name)
         //setOpen(true)
     },[])
 

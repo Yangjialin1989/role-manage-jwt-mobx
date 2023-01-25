@@ -1,45 +1,45 @@
 import {makeAutoObservable} from "mobx";
 
 import service from './../service'
-class UserStore{
+class AdminStore{
     //可观察的属性 observable,相当于全局变量，刷新就没有了，因此computed
     //计算属性 computed,action
     constructor() {
         makeAutoObservable(this)
     }
 
-    userInfo = window.localStorage.getItem('user')?JSON.parse(window.localStorage.getItem('user')):[];
-    userList = sessionStorage.getItem('userList')?JSON.stringify(sessionStorage.getItem('userList')):{};
+    adminInfo = window.localStorage.getItem('admin')?JSON.parse(window.localStorage.getItem('admin')):[];
+    adminList = sessionStorage.getItem('adminList')?JSON.stringify(sessionStorage.getItem('adminList')):{};
     //userList = sessionStorage.getItem('userList')?sessionStorage.getItem('userList'):[];
 
 
     //获取
-    get user(){
-        if(sessionStorage.getItem('user')){
-            return JSON.parse(sessionStorage.getItem('user'));
+    get admin(){
+        if(sessionStorage.getItem('admin')){
+            return JSON.parse(sessionStorage.getItem('admin'));
         }
         return {};
     }
     //修改
-    set user(data){
-        sessionStorage.setItem('user',JSON.stringify(data))
+    set admin(data){
+        sessionStorage.setItem('admin',JSON.stringify(data))
     }
     //获取
-    get userlist(){
-        if(sessionStorage.getItem('userlist')){
-            return sessionStorage.getItem('userlist');
+    get adminList(){
+        if(sessionStorage.getItem('adminlist')){
+            return sessionStorage.getItem('adminlist');
         }
         return {};
     }
     get permissionlist(){
-        if(sessionStorage.getItem('user')){
-            return JSON.parse(sessionStorage.getItem('user'));
+        if(sessionStorage.getItem('admin')){
+            return JSON.parse(sessionStorage.getItem('admin'));
         }
         return {};
     }
     //修改
-    set userlist(data){
-        sessionStorage.setItem('userlist',JSON.stringify(data))
+    set adminList(data){
+        sessionStorage.setItem('adminlist',JSON.stringify(data))
     }
 
     get token(){
@@ -51,17 +51,22 @@ class UserStore{
     set token(value){
         window.localStorage.setItem('token',value)
     }
-
-    login=(userInput)=>{
+    //登录
+    login=(adminInput)=>{
         //只进行数据处理，不进行界面提示信息，返回Promise对象
         return new Promise((resolve,reject )=>{
             //1.发起axios请求
-            service.userService.User_Login(userInput).then((data)=>{
-               // console.log('store - login',data)
-                this.token = data.token;
-                //this.user = data.data;
-                this.userInfo = data.data;
-               window.localStorage.setItem('user',JSON.stringify(data.data));
+            service.adminService.Admin_Login(adminInput).then((data)=>{
+              //console.log('store - login',data)
+                if(data.code===100){
+                   // message.error(data.msg)
+                }else{
+                    this.token = data.token;
+                    //this.user = data.data;
+                    this.adminInfo = data.data;
+                    window.localStorage.setItem('admin',JSON.stringify(data.data));
+                }
+
                 //返回data，用于前台判断
                 resolve(data)
             }).catch((err)=>{
@@ -69,6 +74,89 @@ class UserStore{
             })
         })
     }
+    //名称验证
+    adminvalid=(adminInput)=>{
+        //只进行数据处理，不进行界面提示信息，返回Promise对象
+        return new Promise((resolve,reject )=>{
+            //1.发起axios请求
+            service.adminService.Admin_Adminvalid(adminInput).then((data)=>{
+                resolve(data)
+            }).catch((err)=>{
+                reject(err)
+            })
+        })
+    }
+    //注册
+    adminregister=(adminInput)=>{
+        //只进行数据处理，不进行界面提示信息，返回Promise对象
+        return new Promise((resolve,reject )=>{
+            //1.发起axios请求
+            service.adminService.Admin_Adminregister(adminInput).then((data)=>{
+                resolve(data)
+            }).catch((err)=>{
+                reject(err)
+            })
+        })
+    }
+    //获取列表
+    adminlist=(limit)=>{
+        //只进行数据处理，不进行界面提示信息，返回Promise对象
+        return new Promise((resolve,reject )=>{
+            //1.发起axios请求
+            service.adminService.Admin_Adminlist(limit).then((data)=>{
+                resolve(data)
+            }).catch((err)=>{
+                reject(err)
+            })
+        })
+    }
+    //搜索管理员
+    adminsearch=(admin)=>{
+        //只进行数据处理，不进行界面提示信息，返回Promise对象
+        return new Promise((resolve,reject )=>{
+            //1.发起axios请求
+            service.adminService.Admin_Adminsearch(admin).then((data)=>{
+                resolve(data)
+            }).catch((err)=>{
+                reject(err)
+            })
+        })
+    }
+    //搜索管理员
+    admindelete=(admin)=>{
+        //只进行数据处理，不进行界面提示信息，返回Promise对象
+        return new Promise((resolve,reject )=>{
+            //1.发起axios请求
+            service.adminService.Admin_Admindelete(admin).then((data)=>{
+                resolve(data)
+            }).catch((err)=>{
+                reject(err)
+            })
+        })
+    }
+    //搜索管理员
+    adminupdate=(admin)=>{
+        //只进行数据处理，不进行界面提示信息，返回Promise对象
+        return new Promise((resolve,reject )=>{
+            //1.发起axios请求
+            service.adminService.Admin_Adminupdate(admin).then((data)=>{
+                resolve(data)
+            }).catch((err)=>{
+                reject(err)
+            })
+        })
+    }
+
+
+
+
+
+
+
+
+
+
+
     userrefreshtoken=(userInput)=>{
         //只进行数据处理，不进行界面提示信息，返回Promise对象
         return new Promise((resolve,reject )=>{
@@ -176,21 +264,7 @@ class UserStore{
             })
         })
     }
-    uservalid=(userInput)=>{
-        //只进行数据处理，不进行界面提示信息，返回Promise对象
-        return new Promise((resolve,reject )=>{
-            //1.发起axios请求
-            service.userService.User_Uservalid(userInput).then((data)=>{
-                console.log('store - uservalid',data)
-               //window.localStorage.setItem('token',data.data);
-                //返回data，用于前台判断
-                //window.localStorage.setItem('avatar',data.data);
-                resolve(data)
-            }).catch((err)=>{
-                reject(err)
-            })
-        })
-    }
+
     userlist1=(limit)=>{
         //只进行数据处理，不进行界面提示信息，返回Promise对象
         return new Promise((resolve,reject )=>{
@@ -273,5 +347,5 @@ class UserStore{
 
 
 
-export default UserStore
+export default AdminStore
 

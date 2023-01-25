@@ -1,11 +1,18 @@
 import React, {useEffect, useState} from 'react';
 import {Form, Input, InputNumber, message, Popconfirm, Table, Typography} from 'antd';
 import {inject,observer} from "mobx-react";
-
-
-
 const {Search} = Input
-const originData = [];
+ const originData = [];
+// for (let i = 0; i < 100; i++) {
+//     originData.push({
+//         key: i.toString(),
+//         name: `Edrward ${i}`,
+//         telephone: 32,
+//         email: `London Park no. ${i}`,
+//     });
+// }
+// //
+
 const EditableCell = ({
                           editing,
                           dataIndex,
@@ -41,44 +48,39 @@ const EditableCell = ({
     );
 };
 const App = (props) => {
-
+    const [limit,setLimit]=useState(1)
     const [form] = Form.useForm();
     const [data, setData] = useState(originData);
     const [editingKey, setEditingKey] = useState('');
-    const isEditing = (record) => record._id === editingKey;
+    const isEditing = (record) => record.id === editingKey;
     const edit = (record) => {
         form.setFieldsValue({
-            roleName: '',
-            permissionList: '',
-            updatedAt: new Date(),
+            name: '',
+            email: '',
+            telephone: '',
             ...record,
         });
-        setEditingKey(record._id);
+        setEditingKey(record.id);
     };
-    const cancel = () => {
+    const cancel =async (page,pageSize) => {
+        await props.user.userlist1({limit:page}).then(data=>setData(data.data))
         setEditingKey('');
     };
     const handleDelete = async (record)=>{
         //console.log(typeof(record),record)
-        await props.user.userpd({_id:record,deletedAt:new Date()})
-        getInfo()
+        await props.admin.admindelete({id:record})
+        getUserList()
     }
     const save = async (record) => {
         try {
             const row = await form.validateFields();
-            row._id = record._id;
-            row.updatedAt=new Date()
+            row.id = record.id;
             console.log(row)
-            //let updatedAt = new Date()
-            await props.user.userpu(row).then(data=>{
-                setData(data.data)
-                message.success('角色修改成功！')
-                window.location.reload()
-            })
+            await props.user.userupdate(row).then(data=>setData(data.data))
 
 
             const newData = [...data];
-            const index = newData.findIndex((item) => record._id === item._id);
+            const index = newData.findIndex((item) => record.id === item.id);
             if (index > -1) {
                 const item = newData[index];
                 newData.splice(index, 1, {
@@ -99,44 +101,26 @@ const App = (props) => {
     };
     const columns = [
         {
-            title: '唯一标识',
-            dataIndex: '_id',
-           // key: 'roleName',
-            width: '15%',
-            editable: false,
-        },
-        {
-            title: '权限名称',
-            dataIndex: 'roleName',
-           // key: 'roleName',
-            width: '15%',
+            title: '管理员',
+            dataIndex: 'name',
+            width: '25%',
             editable: true,
         },
         {
-            title: '权限列表',
-            dataIndex: 'permissionList',
-            //key: 'permissionList',
-            width: '15%',
+            title: '邮箱',
+            dataIndex: 'email',
+            width: '30%',
             editable: true,
         },
         {
-            title: '创建日期',
-            dataIndex: 'createdAt',
-           // key: 'createdAt',
-            width: '10%',
-            editable: false,
+            title: '电话',
+            dataIndex: 'telephone',
+            width: '30%',
+            editable: true,
         },
         {
-            title: '更新日期',
-            dataIndex: 'updatedAt',
-           // key: 'createdAt',
-            width: '10%',
-            editable: false,
-        },
-        {
-            title: 'operation',
+            title: '操作',
             dataIndex: 'operation',
-            //key:'_id',
             render: (_, record) => {
                 const editable = isEditing(record);
                 return editable ? (
@@ -164,13 +148,19 @@ const App = (props) => {
                         <a>编辑</a>
                     </Typography.Link>
                     <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                    <Popconfirm  title="数据无价，您确定删除?" onConfirm={()=>handleDelete(record._id)} >
+                    <Popconfirm  title="数据无价，您确定删除?" onConfirm={()=>handleDelete(record.id)} >
                     <a style={{color:'red'}}>删除</a>
                     </Popconfirm>
                     </span>
 
                 );
                 //Delete
+
+
+
+
+
+
             },
         },
     ];
@@ -182,26 +172,38 @@ const App = (props) => {
             ...col,
             onCell: (record) => ({
                 record,
-                //inputType: col.dataIndex === 'telephone' ? 'number' : 'text',
+                inputType: col.dataIndex === 'telephone' ? 'number' : 'text',
                 dataIndex: col.dataIndex,
                 title: col.title,
                 editing: isEditing(record),
             }),
         };
     });
-    const getInfo=()=>{
-        props.user.userpl().then(data=>{
-            setData(data.data)
-            console.log(data)
-        }
-        )
+    const getUserList=()=>{
+        props.user.userlist1({limit}).then(data=>setData(data.data))
+
+
+
+
+
     }
+
     useEffect(() => {
-        getInfo()
+        getUserList({limit})
     }, []);
     const onSearch = async(value) => {
+        //console.log('search',value)
+        // let res = await this.props.user.usersearch({name: ''})
+        // if (res.data.length === 0) {
+        //     message.info('没有查询到数据')
+        // } else {
+        //     message.success('查询成功')
+        //     this.setState({
+        //         list: res.data[0]
+        //     })
+        // }
         if (value === '') {
-            let res = await this.props.user.userpf({roleName: ''})
+            let res = await this.props.user.usersearch({name: ''})
             if (res.data.length === 0) {
                 message.info('没有查询到数据')
             } else {
@@ -211,7 +213,7 @@ const App = (props) => {
                 })
             }
         } else {
-            let res = await props.user.userpf({roleName: value.trim()})
+            let res = await props.user.usersearch({name: value.trim()})
             if (res.data.length === 0) {
                 message.info('没有查询到数据')
             } else {
@@ -225,7 +227,7 @@ const App = (props) => {
 
         return (
         <Form form={form} component={false}>
-            <Search allowClear placeholder={'请输入要查询的权限名称。'}  onSearch={onSearch} size={'large'}></Search>
+            <Search allowClear  onSearch={onSearch} size={'large'}></Search>
 
             <Table
                 components={{
@@ -239,9 +241,10 @@ const App = (props) => {
                 rowClassName="editable-row"
                 pagination={{
                     onChange: cancel,
+                    pageSize:15
                 }}
             />
         </Form>
     );
 };
-export default inject('admin','user')(observer(App)) ;
+export default inject('user')(observer(App)) ;

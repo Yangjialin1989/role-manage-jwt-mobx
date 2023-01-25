@@ -78,7 +78,7 @@ axios.interceptors.response.use(
                     if(flag) {
                         if (difference < 60) {
                             const refresh_token = window.localStorage.getItem('refresh_token');
-                            Axios.post('/api/users/refreshtoken', {}, {
+                            Axios.post('/api/admins/refreshtoken', {}, {
                                 headers: {
                                     'Authorization': 'Bearer ' + refresh_token
                                 },
@@ -102,7 +102,7 @@ axios.interceptors.response.use(
                 if(flag){
                     if(difference<1600){
                         const refresh_token = window.localStorage.getItem('refresh_token');
-                        Axios.post('/api/users/refreshtoken',{},{
+                        Axios.post('/api/admins/refreshtoken',{},{
                             headers:{
                                 'Authorization':'Bearer '+refresh_token
                             },
@@ -120,49 +120,12 @@ axios.interceptors.response.use(
                     }
             }
 
-
-
-
-
-
-
-
-
-
-
-
-
-                    //let flag = true;
-
-                    // let msg = '令牌还有'+difference+'s过期'
-                    //message.info(msg)
-                    // const refresh_token = window.localStorage.getItem('refresh_token');
-                    // Axios.post('/api/users/refreshtoken',{},{
-                    //     headers:{
-                    //         'Authorization':'Bearer '+refresh_token
-                    //     }
-                    // }).then((data=>{
-                    //     if(data.data.code === 100){
-                    //
-                    //
-                    //
-                    //     }else{
-                    //         let exp = cookie.load('exp')
-                    //         console.log('exp')
-                    //     }
-                    //
-                    //
-                    // }))
-                    //
-
-
-
-
                 }
 
 
 
-            if(response.data.token){
+            if(response.data.token && response.data.token !== null){
+                console.log('jinlaile....')
                 window.localStorage.setItem('token', response.data.token);
                 window.localStorage.setItem('refresh_token', response.data.refresh_token);
                 //判断refresh_token过期，提示

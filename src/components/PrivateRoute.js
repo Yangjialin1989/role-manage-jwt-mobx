@@ -46,7 +46,8 @@ const PrivateRoute = (props)=>{
    }
 
     //console.log('localstorage menuInfos',JSON.parse(menuInfos))
-   const menuInfo = props.user.userInfo.menuInfo ?props.user.userInfo.menuInfo :[];
+  // const menuInfo = props.user.userInfo.menuInfo ?props.user.userInfo.menuInfo :[];
+   const menuInfo = props.admin.adminInfo.menuInfo ?props.admin.adminInfo.menuInfo :[];
   // const menuInfo = menuInfos? menuInfos:[];
 
     // if(props.user.userInfo.menuInfo === undefined){
@@ -96,4 +97,4 @@ const PrivateRoute = (props)=>{
     ])
 }
 
-export default inject('user')(observer(PrivateRoute));
+export default inject('user','admin')(observer(PrivateRoute));

@@ -68,10 +68,10 @@ function LeftMenu(props) {
     theme="light"
     mode="inline"
     defaultSelectedKeys={['1']}
-    items={bindMenu(props.user.userInfo.menuInfo ? props.user.userInfo.menuInfo:[])}
+    items={bindMenu(props.admin.adminInfo.menuInfo ? props.admin.adminInfo.menuInfo:[])}
   />
   )
 }
 
 
-export default inject('user')(observer(LeftMenu))
+export default inject('user','admin')(observer(LeftMenu))
