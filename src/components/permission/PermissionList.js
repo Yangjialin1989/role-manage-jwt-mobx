@@ -2,11 +2,11 @@ import {Component} from 'react'
 import {Input, Table, Popconfirm, message, Button,} from 'antd'
 
 import {inject,observer} from 'mobx-react'
-import AddRole from "./AddRole";
-import EditTable1 from "../Table/EditTable1";
+import AddPermission from "./AddPermission";
+import PermissionTable from "../Table/PermissionTable";
 const {Search} = Input
 
-class RoleList extends Component{
+class PermissionList extends Component{
 
     constructor(props) {
         super(props);
@@ -15,20 +15,29 @@ class RoleList extends Component{
             list:[],
             columns:[
                 {
-                    title:'角色名称',
-                    dataIndex:'roleName',
-                    key:'roleName'
-                },
-                // {
-                //     title:'权限列表',
-                //     dataIndex:'permissionList',
-                //     key:'permissionList'
-                // }
-                // ,
-                {
+                    title:'权限名称',
+                    dataIndex:'title',
+                    key:'title'
+                },{
+                    title:'接口路径',
+                    dataIndex:'apiPath',
+                    key:'apiPath'
+                },{
+                    title:'请求方法',
+                    dataIndex:'method',
+                    key:'method'
+                },{
+                    title:'菜单路径',
+                    dataIndex:'rule',
+                    key:'rule'
+                },{
                     title:'创建日期',
                     dataIndex:'createdAt',
                     key:'createdAt'
+                },{
+                    title:'更新日期',
+                    dataIndex:'updatedAt',
+                    key:'updatedAt'
                 },{
                     title:'操作',
                     dataIndex:'operation',
@@ -47,11 +56,11 @@ class RoleList extends Component{
         this.getInfo()
     }
     getInfo=()=>{
-        this.props.role.list().then(data=>{
+        this.props.permission.list().then(data=>{
             this.setState({
                 list:data.data
             })
-            //console.log(data.data)
+            console.log(data.data)
         }
 
 
@@ -134,21 +143,20 @@ class RoleList extends Component{
         // }
         return (
             <>
-                <h2>角色列表</h2>
-                <AddRole open={this.state.visibeAddRoleModal}
+                <AddPermission open={this.state.visibeAddRoleModal}
                          callback={this.hideAddRoleModal}
-                ></AddRole>
-                <Button onClick={this.showAddRoleModal} type={'primary'}>添加角色</Button>
+                ></AddPermission>
+                <Button onClick={this.showAddRoleModal} type={'primary'}>添加权限</Button>
                 {/*<Search onChange={this.onChange} allowClear  onSearch={this.onSearch} size={'large'}></Search>*/}
 
                 {/*    <Table pagination={this.paginationProps}  loading={this.state.list.length !== 0 ? false : true} dataSource={this.state.list} columns={this.state.columns}>*/}
 
                 {/*</Table>*/}
                 <hr/>
-                <EditTable1 callback={this.hideAddRoleModal}></EditTable1>
+                <PermissionTable callback={this.hideAddRoleModal}></PermissionTable>
 
             </>
         )
     }
 }
-export default inject('role')(observer(RoleList))
+export default inject('permission')(observer(PermissionList))

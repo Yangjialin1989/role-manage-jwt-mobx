@@ -75,11 +75,11 @@ class AdminStore{
         })
     }
     //名称验证
-    adminvalid=(adminInput)=>{
+    valid=(adminInput)=>{
         //只进行数据处理，不进行界面提示信息，返回Promise对象
         return new Promise((resolve,reject )=>{
             //1.发起axios请求
-            service.adminService.Admin_Adminvalid(adminInput).then((data)=>{
+            service.adminService.Admin_valid(adminInput).then((data)=>{
                 resolve(data)
             }).catch((err)=>{
                 reject(err)
@@ -87,11 +87,11 @@ class AdminStore{
         })
     }
     //注册
-    adminregister=(adminInput)=>{
+    register=(adminInput)=>{
         //只进行数据处理，不进行界面提示信息，返回Promise对象
         return new Promise((resolve,reject )=>{
             //1.发起axios请求
-            service.adminService.Admin_Adminregister(adminInput).then((data)=>{
+            service.adminService.Admin_register(adminInput).then((data)=>{
                 resolve(data)
             }).catch((err)=>{
                 reject(err)
@@ -99,11 +99,11 @@ class AdminStore{
         })
     }
     //获取列表
-    adminlist=(limit)=>{
+    list=(limit)=>{
         //只进行数据处理，不进行界面提示信息，返回Promise对象
         return new Promise((resolve,reject )=>{
             //1.发起axios请求
-            service.adminService.Admin_Adminlist(limit).then((data)=>{
+            service.adminService.Admin_list(limit).then((data)=>{
                 resolve(data)
             }).catch((err)=>{
                 reject(err)
@@ -111,11 +111,11 @@ class AdminStore{
         })
     }
     //搜索管理员
-    adminsearch=(admin)=>{
+    search=(admin)=>{
         //只进行数据处理，不进行界面提示信息，返回Promise对象
         return new Promise((resolve,reject )=>{
             //1.发起axios请求
-            service.adminService.Admin_Adminsearch(admin).then((data)=>{
+            service.adminService.Admin_search(admin).then((data)=>{
                 resolve(data)
             }).catch((err)=>{
                 reject(err)
@@ -123,11 +123,11 @@ class AdminStore{
         })
     }
     //搜索管理员
-    admindelete=(admin)=>{
+    delete=(admin)=>{
         //只进行数据处理，不进行界面提示信息，返回Promise对象
         return new Promise((resolve,reject )=>{
             //1.发起axios请求
-            service.adminService.Admin_Admindelete(admin).then((data)=>{
+            service.adminService.Admin_delete(admin).then((data)=>{
                 resolve(data)
             }).catch((err)=>{
                 reject(err)
@@ -135,11 +135,23 @@ class AdminStore{
         })
     }
     //搜索管理员
-    adminupdate=(admin)=>{
+    update=(admin)=>{
         //只进行数据处理，不进行界面提示信息，返回Promise对象
         return new Promise((resolve,reject )=>{
             //1.发起axios请求
-            service.adminService.Admin_Adminupdate(admin).then((data)=>{
+            service.adminService.Admin_update(admin).then((data)=>{
+                resolve(data)
+            }).catch((err)=>{
+                reject(err)
+            })
+        })
+    }
+    //搜索管理员
+    avatar=(imgSrc)=>{
+        //只进行数据处理，不进行界面提示信息，返回Promise对象
+        return new Promise((resolve,reject )=>{
+            //1.发起axios请求
+            service.adminService.Admin_avatar(imgSrc).then((data)=>{
                 resolve(data)
             }).catch((err)=>{
                 reject(err)
@@ -157,11 +169,11 @@ class AdminStore{
 
 
 
-    userrefreshtoken=(userInput)=>{
+        refresh=(userInput)=>{
         //只进行数据处理，不进行界面提示信息，返回Promise对象
         return new Promise((resolve,reject )=>{
             //1.发起axios请求
-            service.userService.User_Userrefreshtoken(userInput).then((data)=>{
+            service.adminService.Admin_refresh(userInput).then((data)=>{
                 //console.log('store - userrefreshtoken',data)
                 this.token = data.token;
 

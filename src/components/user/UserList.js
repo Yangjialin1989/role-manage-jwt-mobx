@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import './Welcome.css'
 import {inject,observer} from "mobx-react";
-import UserTable from "../EditTable/UserTable";
+import UserTable from "../Table/UserTable";
 import {Button, Modal, Form, Input, Space,message} from "antd";
 import Tree from '../Tree/Tree'
 function UserList (props){

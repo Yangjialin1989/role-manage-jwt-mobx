@@ -1,7 +1,7 @@
 import React, { useState,useRef } from 'react';
 import { useEffect } from 'react'
-import {Layout, Input, Dropdown, message, Divider, Space, Tour, theme, Button, Modal} from 'antd';
-import {UserOutlined,PoweroffOutlined,CopyrightOutlined,QuestionCircleOutlined,GlobalOutlined} from '@ant-design/icons'
+import {Layout, Input, Badge,Dropdown, message, Divider, Space, Tour, theme, Button, Modal} from 'antd';
+import {UserOutlined,BellOutlined,PoweroffOutlined,CopyrightOutlined,QuestionCircleOutlined,GlobalOutlined} from '@ant-design/icons'
 import './Home.css'
 import { EllipsisOutlined } from '@ant-design/icons';
 import cookie from 'react-cookies'
@@ -65,8 +65,23 @@ function Home(props){
         setIsModalOpen(true);
         message.info('该功能处于开发阶段，工程师真正努力中。')
     }
+
+    function meg() {
+        console.log('最新消息')
+    }
+
     const items = [
         {
+            key: '0',
+            label: (
+                <Badge count={5} size={'small'} offset={[5,0]}>
+                <span onClick={meg}>
+                <span>&nbsp;&nbsp;&nbsp;&nbsp;</span><BellOutlined /> <span>&nbsp;</span><span>最新消息</span>
+                </span>
+                </Badge>
+
+            ),
+        },{
             key: '1',
             label: (
                 <span onClick={personal}>
@@ -91,6 +106,7 @@ function Home(props){
 
         setAvatar('/api/'+JSON.parse(admin).userInfo.avatar)
         setName(JSON.parse(admin).userInfo.name)
+        setRoleName(JSON.parse(admin).userInfo.roleName)
         //setOpen(true)
     },[])
 
@@ -100,6 +116,7 @@ function Home(props){
     const [collapsed, setCollapsed] = useState(false);
     const [avatar, setAvatar] = useState();
     const [name, setName] = useState();
+    const [roleName, setRoleName] = useState();
     const {
         token: { colorBgContainer },
     } = theme.useToken();
@@ -180,9 +197,12 @@ function Home(props){
                             <Button ref={ref2} style={{background:'#000',border:'0px',marginBottom:'36px'}}>
                                 <span className={'icon'} >
                                     <span>
-                                <img style={{borderRadius:'50%'}} src={avatar} alt="avatar"/>
+                                <Badge offset={[-12,16]} size={"small"} count={5}>
+                                    <img style={{borderRadius:'50%'}} src={avatar} alt="avatar"/>
+                                </Badge>
+                                         <span style={{color:'red',fontSize:'6px',}}>{roleName}</span>
                                </span>
-                                <span className={'name'}>
+                                <span  className={'name'}>
                                 {name}
                                 </span>
                                 </span>
@@ -231,7 +251,7 @@ function Home(props){
                 </Content>
             </Layout>
         </Layout>
-            <Footer className={'footer'}>
+            <Footer style={{width:'100%'}} className={'footer'}>
                 <p style={{textAlign:'center'}}>
                     <GithubOutlined /><AntDesignOutlined style={{marginLeft:'20px'}}/>
                 </p>

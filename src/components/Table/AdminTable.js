@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Form, Radio, Input, InputNumber, message, Modal, Popconfirm, Table, Typography, Space, Button} from 'antd';
+import {Form, Radio,Select, Input, InputNumber, message, Modal, Popconfirm, Table, Typography, Space, Button} from 'antd';
 import {inject,observer} from "mobx-react";
 import TextArea from "antd/es/input/TextArea";
 import UploadAdminAvatar from "../Upload/UploadAdminAvatar";
@@ -53,10 +53,11 @@ const App = (props) => {
     const [form] = Form.useForm();
     const [form1] = Form.useForm();
     const [value, setValue] = useState(3);
-    const [avatar, setAvatar] = useState('https://gw.alipayobjects.com/zos/rmsportal/jZUIxmJycoymBprLOUbT.png');
+    const [avatar, setAvatar] = useState('static/image1.jpeg');
     const [limit,setLimit]=useState(1);
     const [open,setOpen]=useState(false);
     const [admin,setAdmin]=useState([]);
+    const [roleOptions,setRoleOptions]=useState([]);
     const [data, setData] = useState(originData);
     const [editingKey, setEditingKey] = useState('');
     const isEditing = (record) => record.id === editingKey;
@@ -74,13 +75,13 @@ const App = (props) => {
         setEditingKey('');
         setLimit(page)
         console.log(limit)
-        await props.admin.adminlist({limit:page}).then(data=>setData(data.data))
+        await props.admin.list({limit:page}).then(data=>setData(data.data))
        // window.location.reload()
 
     };
     const handleDelete = async (record)=>{
         //console.log(typeof(record),record)
-        await props.admin.admindelete({id:record,deletedAt:new Date()})
+        await props.admin.delete({id:record,deletedAt:new Date()})
         getAdminList({limit})
     }
     const save = async (record) => {
@@ -91,9 +92,9 @@ const App = (props) => {
             console.log(row)
 
                 let name = row.name
-                await props.admin.adminvalid({name}).then(data=>{
+                await props.admin.valid({name}).then(data=>{
                     if(data.code === 300){
-                        props.admin.adminupdate(row).then((data)=>{
+                        props.admin.update(row).then((data)=>{
                             // console.log(status,msg,data)
                             if(data.status===700){
                                 setData(data.data)
@@ -107,7 +108,7 @@ const App = (props) => {
                         })
                     }
                    else if(data.code === 102 && name === record.name){
-                        props.admin.adminupdate(row).then((data)=>{
+                        props.admin.update(row).then((data)=>{
                             // console.log(status,msg,data)
                             if(data.status===700){
                                 setData(data.data)
@@ -156,18 +157,47 @@ const App = (props) => {
 
     function openModal(record) {
         setAvatar('/api/'+record.avatar)
-        console.log(record.avatar)
+        console.log(record)
         setOpen(true)
         setAdmin(record)
-        console.log(avatar)
+        //console.log(avatar)
     }
 
     const columns = [
         {
+            title: '头像',
+            dataIndex: 'avatar',
+            width: '40px',
+            key:'avatar',
+            editable: true,
+            fixed: 'left',
+            render:(_, {avatar})=>
+
+                    (<img style={{width:'40px',height:'40px' }} src={`/api/${avatar}`} alt=""/>)
+
+
+
+
+
+
+                //setAvatar(record.avatar)
+                //console.log(record)
+
+
+        },{
+        //<img style={{width:'40px',height:'40px' ,background:'red'}} src={avatar} alt=""/>)
             title: '管理员',
             dataIndex: 'name',
             width: '40px',
             key:'name',
+            editable: true,
+            fixed: 'left',
+        },{
+        //<img style={{width:'40px',height:'40px' ,background:'red'}} src={avatar} alt=""/>)
+            title: '等级',
+            dataIndex: 'roleName',
+            width: '40px',
+            key:'roleName',
             editable: true,
             fixed: 'left',
         },{
@@ -254,6 +284,7 @@ const App = (props) => {
         if (!col.editable) {
             return col;
         }
+        console.log('edit')
         return {
             ...col,
             onCell: (record) => ({
@@ -266,9 +297,14 @@ const App = (props) => {
         };
     });
     const getAdminList=({limit})=>{
-        props.admin.adminlist({limit}).then(data=>{
+        props.admin.list({limit}).then(data=>{
             setData(data.data)
-            console.log(data)
+            data.data.map(item=>{
+                setAvatar('/api/'+item.avatar)
+            })
+
+
+
         })
 
 
@@ -278,6 +314,19 @@ const App = (props) => {
     }
 
     useEffect(() => {
+        props.role.list().then(data=>{
+            console.log(data.data)
+            //setRoles(data.data)
+            let list = []
+            data.data.map(item=>{
+                list.push({
+                    value:item.id,
+                    label:item.roleName
+                })
+            })
+            setRoleOptions(list)
+
+        })
         getAdminList({limit})
     }, []);
     const onSearch = async(value) => {
@@ -292,7 +341,7 @@ const App = (props) => {
         //     })
         // }
         if (value === '') {
-            let res = await this.props.admin.adminsearch({name: ''})
+            let res = await this.props.admin.search({name: ''})
             if (res.data.length === 0) {
                 message.info('没有查询到数据')
             } else {
@@ -302,11 +351,12 @@ const App = (props) => {
                 })
             }
         } else {
-            let res = await props.admin.adminsearch({name: value.trim(),deletedAt:null})
+            let res = await props.admin.search({name: value.trim(),deletedAt:null})
             if (res.data.length === 0) {
                 message.info('没有查询到数据')
             } else {
                 message.success('查询成功')
+                console.log('search',res.data)
                 setData(res.data)
             }
         }
@@ -329,19 +379,35 @@ const App = (props) => {
         window.location.reload()
     }
     const onFinish = async(values)=>{
-           values._id=admin._id;
+        props.role.search({id:values.role_id}).then(data=>{
+            //console.log(data.data)
+            values.menuList = data.data.menuInfo
+            values.id=admin.id;
+            props.admin.update(values).then(data=>{
+                if(data.status === 700){
+                    message.success(data.msg)
+                    form1.resetFields();
+                }
+                if(data.status=== 107){message.error(data.msg)}
+                setOpen(false)
+            })
+
+        })
+
+
+
         //console.log(values,admin)
 
-        let {status,msg} = await props.admin.adminupdate(values)
-        if(status === 700){
-            message.success(msg)
-            form1.resetFields();
-        }
-         if(status=== 107){message.error(msg)}
+        let {status,msg} = await props.admin.update(values)
+
     }
     const onFinishFailed =  (errorInfo: any) => {
+        //
         console.log('Failed:', errorInfo);
     };
+
+
+
     return (
         <>
             <Modal title={`${admin.name}的详情页`} open={open} footer={null}  onCancel={handleCancel}>
@@ -364,7 +430,7 @@ const App = (props) => {
                     >
                         <img  style={{borderRadius:'50%',width:'100px',height:'100px'}} src={avatar} alt="avatar"/>
                         <div style={{float:'right',marginRight:'30px'}}>
-                            <UploadAdminAvatar></UploadAdminAvatar>
+                            <UploadAdminAvatar adminInfo={admin}></UploadAdminAvatar>
                         </div>
                     </Form.Item>
                     <Form.Item
@@ -403,6 +469,9 @@ const App = (props) => {
                             <Radio value={3}>保密</Radio>
 
                         </Radio.Group>
+                    </Form.Item>
+                    <Form.Item label={'等级'} name={'role_id'}>
+                        <Select options={roleOptions} defaultValue={admin.roleName}></Select>
                     </Form.Item>
                     <Form.Item
                         label="密码"
@@ -443,7 +512,7 @@ const App = (props) => {
                         span: 16,
                     }}>
                         <Space>
-                            <Button  type="primary" htmlType="submit">
+                            <Button   type="primary" htmlType="submit">
                                 保存修改
                             </Button>
 
@@ -473,7 +542,7 @@ const App = (props) => {
                     }}
                     scroll={{
                         x: 1000,
-                        y: 600,
+                        y: 500,
                     }}
                     expandable={null}
                 />
@@ -482,4 +551,4 @@ const App = (props) => {
 
     );
 };
-export default inject('admin')(observer(App)) ;
+export default inject('admin','role','permission')(observer(App)) ;

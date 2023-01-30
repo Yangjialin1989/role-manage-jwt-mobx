@@ -10,11 +10,13 @@ const getBase64 = (file) =>
         reader.readAsDataURL(file);
         reader.onload = () => resolve(reader.result);
         reader.onerror = (error) => reject(error);
+
     });
 
 function  App (props){
     useEffect(()=>{
         // dom操作
+        setImgid(props.adminInfo._id)
 
     },[])
 
@@ -22,7 +24,7 @@ function  App (props){
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
-
+    const [imgid,setImgid]=useState();
     const [fileList, setFileList] = useState([])
     const handleCancel = () => setPreviewOpen(false);
     const handlePreview = async (file) => {
@@ -50,8 +52,12 @@ function  App (props){
 
 
     };
-    const handleChange = ({ fileList: newFileList }) => {
-        console.log(fileList)
+    const handleChange =({ fileList: newFileList }) => {
+       // console.log(props.admin)
+
+       // console.log(imgid)
+       // console.log(fileList)
+
         setFileList(newFileList)
     };
     const uploadButton = (
@@ -66,6 +72,12 @@ function  App (props){
             </div>
         </div>
     );
+
+    function handleDrop() {
+        //console.log('jinlaile')
+    }
+
+
     return (
         <>
             <ImgCrop rotate>
@@ -73,15 +85,20 @@ function  App (props){
             name="avatar"
             listType="picture-card"
             className="avatar-uploader"
-            action="/api/grids/imgupload"
+           action="/api/admins/avatar"
+           // action={props.admin.avatar(imgid).then(data=>console.log(data))}
+           // action={handleAction}
             headers={
-                {"Authorization":"Bearer "+localStorage.getItem('token')}
+                {"Authorization":"Bearer "+localStorage.getItem('token'),"id":imgid}
+
+
             }
             fileList={fileList}
             onPreview={handlePreview}
             onChange={handleChange}
+            onDrop={handleDrop}
         >
-            {fileList.length >= 8 ? null : uploadButton}
+            {fileList.length >= 1 ? null : uploadButton}
         </Upload>
             </ImgCrop>
         <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
@@ -97,3 +114,4 @@ function  App (props){
         </>);
 };
 export default inject('admin')(observer(App))
+//export default App

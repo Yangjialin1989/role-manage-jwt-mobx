@@ -25,12 +25,12 @@ const EditableCell = ({
                     style={{
                         margin: 0,
                     }}
-                    rules={[
-                        {
-                            required: true,
-                            message: `Please Input ${title}!`,
-                        },
-                    ]}
+                    // rules={[
+                    //     {
+                    //         required: true,
+                    //         message: `Please Input ${title}!`,
+                    //     },
+                    // ]}
                 >
                     {inputNode}
                 </Form.Item>
@@ -47,9 +47,8 @@ const App = (props) => {
     const [editingKey, setEditingKey] = useState('');
     const isEditing = (record) => record._id === editingKey;
     const edit = (record) => {
+        console.log('编辑',record)
         form.setFieldsValue({
-            roleName: '',
-            permissionList: '',
             updatedAt: new Date(),
             ...record,
         });
@@ -59,22 +58,27 @@ const App = (props) => {
         setEditingKey('');
     };
     const handleDelete = async (record)=>{
-        //console.log(typeof(record),record)
-        await props.user.userpd({_id:record,deletedAt:new Date()})
+        console.log(typeof(record),record)
+        await props.permission.delete({_id:record,deletedAt:new Date()})
         getInfo()
     }
     const save = async (record) => {
         try {
             const row = await form.validateFields();
-            row._id = record._id;
+            console.log(row,record)
+            row._id =record._id;
             row.updatedAt=new Date()
-            console.log(row)
+            row.parentId = +row.parentId
+            row.id = +row.id
+            row.isMenu = +row.isMenu
             //let updatedAt = new Date()
-            await props.user.userpu(row).then(data=>{
+
+            await props.permission.update(row).then(data=>{
                 setData(data.data)
-                message.success('角色修改成功！')
+                message.success('权限修改成功！')
                 window.location.reload()
             })
+
 
 
             const newData = [...data];
@@ -98,44 +102,70 @@ const App = (props) => {
         }
     };
     const columns = [
+
         {
-            title: '唯一标识',
-            dataIndex: '_id',
-           // key: 'roleName',
-            width: '15%',
-            editable: false,
-        },
-        {
-            title: '权限名称',
-            dataIndex: 'roleName',
-           // key: 'roleName',
-            width: '15%',
+            title:'权限名称',
+            dataIndex:'title',
+            key:'title',
+            fixed: 'left',
+            width: '100px',
+        },{
+            title:'权限id',
+            dataIndex:'id',
+            key:'id',
             editable: true,
-        },
-        {
-            title: '权限列表',
-            dataIndex: 'permissionList',
-            //key: 'permissionList',
-            width: '15%',
+        },{
+            title:'父级权限id',
+            dataIndex:'parentId',
+            key:'parentId',
             editable: true,
-        },
-        {
-            title: '创建日期',
-            dataIndex: 'createdAt',
-           // key: 'createdAt',
-            width: '10%',
-            editable: false,
-        },
-        {
-            title: '更新日期',
-            dataIndex: 'updatedAt',
-           // key: 'createdAt',
-            width: '10%',
-            editable: false,
+        },{
+            title:'接口路径',
+            dataIndex:'apiPath',
+            key:'apiPath',
+            editable: true,
+        },{
+            title:'请求方法',
+            dataIndex:'method',
+            key:'method'
+        },{
+            title:'菜单',
+            dataIndex:'isMenu',
+            key:'isMenu',
+            editable: true,
+
+        },{
+            title:'菜单图标',
+            dataIndex:'menuImgClass',
+            key:'menuImgClass',
+            editable: true,
+
+        },{
+            title:'菜单路径',
+            dataIndex:'rule',
+            key:'rule',
+            editable: true,
+
+        },{
+            title:'菜单路由',
+            dataIndex:'pathRoute',
+            key:'pathRoute',
+            editable: true,
+
+        },{
+            title:'创建日期',
+            dataIndex:'createdAt',
+            key:'createdAt'
+        },{
+            title:'更新日期',
+            dataIndex:'updatedAt',
+            key:'updatedAt'
         },
         {
             title: 'operation',
             dataIndex: 'operation',
+            fixed: 'right',
+            width: '110px',
             //key:'_id',
             render: (_, record) => {
                 const editable = isEditing(record);
@@ -176,8 +206,10 @@ const App = (props) => {
     ];
     const mergedColumns = columns.map((col) => {
         if (!col.editable) {
+            //console.log('edit')
             return col;
         }
+
         return {
             ...col,
             onCell: (record) => ({
@@ -190,9 +222,86 @@ const App = (props) => {
         };
     });
     const getInfo=()=>{
-        props.user.userpl().then(data=>{
+        props.permission.list().then(data=>{
             setData(data.data)
-            console.log(data)
+            let userList = []
+            let roleList = []
+            let permissionList = []
+            let adminList = []
+            let menuList = []
+
+            let list = data.data
+            list.map((item)=>{
+                if(item.isMenu === 1){
+                    if(item.parentId === 2){
+                        userList.push({
+                            menuId:item.id,
+                            menuName:item.title,
+                            componentPath:item.path,
+                            pathRoute: item.pathRoute,
+                            menuImgClass: item.menuImgClass,
+                            menuUrl:item.rule,
+                        });
+                    }
+                    if(item.parentId === 3){
+                        roleList.push({
+                            menuId:item.id,
+                            menuName:item.title,
+                            componentPath:item.path,
+                            pathRoute: item.pathRoute,
+                            menuImgClass: item.menuImgClass,
+                            menuUrl:item.rule,
+                        });
+                    }
+                    if(item.parentId === 4){
+                        permissionList.push({
+                            menuId:item.id,
+                            menuName:item.title,
+                            componentPath:item.path,
+                            pathRoute: item.pathRoute,
+                            menuImgClass: item.menuImgClass,
+                            menuUrl:item.rule,
+                        });
+                    }
+                    if(item.parentId === 5){
+                        adminList.push({
+                            menuId:item.id,
+                            menuName:item.title,
+                            componentPath:item.path,
+                            pathRoute: item.pathRoute,
+                            menuImgClass: item.menuImgClass,
+                            menuUrl:item.rule,
+                        });
+                    }
+
+                    if(item.id === 2){
+                        item.child = userList;
+                    }
+                    if(item.id === 3){
+                        item.child = roleList;
+                    }
+                    if(item.id === 4){
+                        item.child = permissionList;
+                    }
+                    if(item.id === 5){
+                        item.child = adminList;
+                    }
+                    if(item.parentId === 0){
+                        menuList.push({
+                            menuId:item.id,
+                            menuName:item.title,
+                            menuChilds:item.child,
+                            componentPath:item.path,
+                            pathRoute: item.pathRoute,
+                            menuImgClass: item.menuImgClass,
+                            menuUrl:item.rule,
+                        })
+                    }
+                }
+
+            })
+           console.log('list',menuList)
+
         }
         )
     }
@@ -201,7 +310,7 @@ const App = (props) => {
     }, []);
     const onSearch = async(value) => {
         if (value === '') {
-            let res = await this.props.user.userpf({roleName: ''})
+            let res = await this.props.permission.search({title: ''})
             if (res.data.length === 0) {
                 message.info('没有查询到数据')
             } else {
@@ -211,7 +320,7 @@ const App = (props) => {
                 })
             }
         } else {
-            let res = await props.user.userpf({roleName: value.trim()})
+            let res = await props.permission.search({title: value.trim()})
             if (res.data.length === 0) {
                 message.info('没有查询到数据')
             } else {
@@ -240,8 +349,13 @@ const App = (props) => {
                 pagination={{
                     onChange: cancel,
                 }}
+                scroll={{
+                    x: 1000,
+                    y: 500,
+                }}
+                expandable={null}
             />
         </Form>
     );
 };
-export default inject('admin','user')(observer(App)) ;
+export default inject('admin','user','permission')(observer(App)) ;
