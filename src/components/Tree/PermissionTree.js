@@ -161,12 +161,12 @@ const App = (props) => {
         let arrs = filterMenu(menuInfo)
         let arrs1 = filterMenu1(menuInfo)
         // //console.log(arrs1)
-        // let data1 = await props.permission.findmany(permissionInfoKey);
+        let data1 = await props.permission.findmany(permissionInfoKey);
         // //console.log(data1)
         //
-        // let permissionList = data1.res;
+        let permissionList = data1.res;
 
-        getPermissions([arrs,permissionInfoKey])
+        getPermissions([arrs,permissionList])
 
         setCheckedKeys(checkedKeysValue);
     };

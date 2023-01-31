@@ -21,10 +21,12 @@ function UserList (props){
         setIsModalOpen(false);
     };
     const onFinish = async(values)=>{
-        let {code,msg} = await props.user.userregister(values)
+        let {code,msg} = await props.user.register(values)
         if(code === 200){
             message.success(msg)
             form.resetFields();
+
+            window.location.reload();
         }
         if(code === 101){message.error(msg)}
     }
@@ -70,7 +72,7 @@ function UserList (props){
                             ({ getFieldValue }) => ({
                                 async validator(rule, value) {
                                     let name = getFieldValue('name')
-                                    let {code,msg} =  await props.user.uservalid({name})
+                                    let {code,msg} =  await props.user.valid({name})
                                     if(code === 300){
                                         return Promise.resolve()
                                     }else if(code === 102){

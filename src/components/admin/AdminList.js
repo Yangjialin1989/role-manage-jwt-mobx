@@ -46,6 +46,7 @@ function AdminList (props){
         props.role.search({id:values.role_id}).then(data=>{
             console.log(data.data)
             values.menuList = data.data.menuInfo
+            values.permissions = data.data.permissionList
             values.roleName = data.data.roleName
             setMenuList(data.data.menuInfo)
             props.admin.register(values).then(data=>{

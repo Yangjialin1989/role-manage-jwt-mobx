@@ -1,5 +1,7 @@
 import axios from "../utils/axios";
 import api from './../api'
+
+//1.login
 export function User_Login({name,password}){
     return new Promise((resolve, reject)=>{
         axios.post(api.userApi.USER_LOGIN,{name,password}).then((res)=>{
@@ -9,96 +11,85 @@ export function User_Login({name,password}){
         })
     })
 }
-//角色查询
-export function User_Userpf(params){
+
+
+
+//2.用户列表
+export function User_list(params){
     return new Promise((resolve, reject)=>{
-        axios.post(api.userApi.USER_USERPF,params).then((res)=>{
+        axios.post(api.userApi.USER_LIST,params).then((res)=>{
             resolve(res.data)
         }).catch((err)=>{
             reject(err)
         })
     })
 }
-//角色删除
-export function User_Userpd(params){
+//3.删除某一用户
+export function User_delete(params){
     return new Promise((resolve, reject)=>{
-        axios.post(api.userApi.USER_USERPD,params).then((res)=>{
+        axios.post(api.userApi.USER_DELERE,params).then((res)=>{
             resolve(res.data)
         }).catch((err)=>{
             reject(err)
         })
     })
 }
-//角色更新
-export function User_Userpu(params){
+//4.更新已有的用户
+export function User_update(params){
     return new Promise((resolve, reject)=>{
-        axios.post(api.userApi.USER_USERPU,params).then((res)=>{
+        axios.post(api.userApi.USER_UPDATE,params).then((res)=>{
             resolve(res.data)
         }).catch((err)=>{
             reject(err)
         })
     })
 }
-//注册的时候用户名验证
-export function User_Uservalid(params){
+//5.搜索用户
+export function User_search(params){
     return new Promise((resolve, reject)=>{
-        axios.post(api.userApi.USER_USERVALID,params).then((res)=>{
+        axios.post(api.userApi.USER_SEARCH,params).then((res)=>{
             resolve(res.data)
         }).catch((err)=>{
             reject(err)
         })
     })
 }
-//添加角色
-export function User_Userps(params){
+
+
+//7获取用户头像
+export function User_avatar(params){
     return new Promise((resolve, reject)=>{
-        axios.post(api.userApi.USER_USERPS,params).then((res)=>{
+        axios.post(api.userApi.USER_AVATAR,params).then((res)=>{
             resolve(res.data)
         }).catch((err)=>{
             reject(err)
         })
     })
 }
-//查询角色
-export function User_Userpl(params){
+
+//8.注册的时候用户名验证
+export function User_valid(params){
     return new Promise((resolve, reject)=>{
-        axios.post(api.userApi.USER_USERPL,params).then((res)=>{
+        axios.post(api.userApi.USER_VALID,params).then((res)=>{
             resolve(res.data)
         }).catch((err)=>{
             reject(err)
         })
     })
 }
-//注册户名
-export function User_Userregister(params){
+
+//9注册户名
+export function User_register(params){
     return new Promise((resolve, reject)=>{
-        axios.post(api.userApi.USER_USERREGISTER,params).then((res)=>{
+        axios.post(api.userApi.USER_REGISTER,params).then((res)=>{
             resolve(res.data)
         }).catch((err)=>{
             reject(err)
         })
     })
 }
-//获取用户头像
-export function User_Useravatar(params){
-    return new Promise((resolve, reject)=>{
-        axios.post(api.userApi.USER_USERAVATAR,params).then((res)=>{
-            resolve(res.data)
-        }).catch((err)=>{
-            reject(err)
-        })
-    })
-}
-//获取用户列表
-export function User_Userrefreshtoken(params){
-    return new Promise((resolve, reject)=>{
-        axios.post(api.userApi.USER_USERREFRESHTOKEN,params).then((res)=>{
-            resolve(res.data)
-        }).catch((err)=>{
-            reject(err)
-        })
-    })
-}
+
+
 //刷新access_token
 export function User_Userlist(params){
     return new Promise((resolve, reject)=>{
@@ -113,36 +104,6 @@ export function User_Userlist(params){
 export function User_Userplist(params){
     return new Promise((resolve, reject)=>{
         axios.post(api.userApi.USER_USERPLIST,params).then((res)=>{
-            resolve(res.data)
-        }).catch((err)=>{
-            reject(err)
-        })
-    })
-}
-//删除某一用户
-export function User_Userdelete(params){
-    return new Promise((resolve, reject)=>{
-        axios.post(api.userApi.USER_USERDELERE,params).then((res)=>{
-            resolve(res.data)
-        }).catch((err)=>{
-            reject(err)
-        })
-    })
-}
-//更新已有的用户
-export function User_Userupdate(params){
-    return new Promise((resolve, reject)=>{
-        axios.post(api.userApi.USER_USERUPDATE,params).then((res)=>{
-            resolve(res.data)
-        }).catch((err)=>{
-            reject(err)
-        })
-    })
-}
-//搜索用户
-export function User_Usersearch(params){
-    return new Promise((resolve, reject)=>{
-        axios.post(api.userApi.USER_USERSEARCH,params).then((res)=>{
             resolve(res.data)
         }).catch((err)=>{
             reject(err)

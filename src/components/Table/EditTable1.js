@@ -113,16 +113,16 @@ const App = (props) => {
             width: '15%',
             editable: true,
         },
-        {
-            title: '权限列表',
-            dataIndex: 'permissionList',
-            //key: 'permissionList',
-            width: '15%',
-            editable: true,
-            render:(permissionList)=>permissionList.map((item)=>{
-                return <li>{item}</li>
-            })
-        },
+        // {
+        //     title: '权限列表',
+        //     dataIndex: 'permissionList',
+        //     //key: 'permissionList',
+        //     width: '15%',
+        //     editable: true,
+        //     render:(permissionList)=>permissionList ? permissionList.map((item)=>{
+        //         return <li>{item}</li>
+        //     }):[]
+        // },
         {
             title: '创建日期',
             dataIndex: 'createdAt',
@@ -194,7 +194,7 @@ const App = (props) => {
         };
     });
     const getInfo=()=>{
-        props.user.userpl().then(data=>{
+        props.role.list().then(data=>{
             setData(data.data)
             console.log(data)
         }
@@ -205,7 +205,7 @@ const App = (props) => {
     }, []);
     const onSearch = async(value) => {
         if (value === '') {
-            let res = await this.props.user.userpf({roleName: ''})
+            let res = await this.props.role.search({roleName: ''})
             if (res.data.length === 0) {
                 message.info('没有查询到数据')
             } else {
@@ -215,7 +215,7 @@ const App = (props) => {
                 })
             }
         } else {
-            let res = await props.user.userpf({roleName: value.trim()})
+            let res = await props.role.search({roleName: value.trim()})
             if (res.data.length === 0) {
                 message.info('没有查询到数据')
             } else {
@@ -248,4 +248,4 @@ const App = (props) => {
         </Form>
     );
 };
-export default inject('admin','user')(observer(App)) ;
+export default inject('admin','user','role')(observer(App)) ;

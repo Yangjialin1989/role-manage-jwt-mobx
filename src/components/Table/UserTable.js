@@ -63,20 +63,21 @@ const App = (props) => {
         setEditingKey(record.id);
     };
     const cancel =async (page,pageSize) => {
-        await props.user.userlist1({limit:page}).then(data=>setData(data.data))
+        await props.user.list1({limit:page}).then(data=>setData(data.data))
         setEditingKey('');
     };
     const handleDelete = async (record)=>{
         //console.log(typeof(record),record)
-        await props.admin.admindelete({id:record})
-        getUserList()
+        await props.user.delete({id:record,deletedAt:new Date()})
+        getUserList({limit})
     }
     const save = async (record) => {
         try {
             const row = await form.validateFields();
             row.id = record.id;
+            row.updatedAt = new Date()
             console.log(row)
-            await props.user.userupdate(row).then(data=>setData(data.data))
+            await props.user.update(row).then(data=>setData(data.data))
 
 
             const newData = [...data];
@@ -179,8 +180,11 @@ const App = (props) => {
             }),
         };
     });
-    const getUserList=()=>{
-        props.user.userlist1({limit}).then(data=>setData(data.data))
+    const getUserList=({limit})=>{
+        props.user.list1({limit}).then(data=>{
+            console.log(data)
+            setData(data.data)
+        })
 
 
 
@@ -203,7 +207,7 @@ const App = (props) => {
         //     })
         // }
         if (value === '') {
-            let res = await this.props.user.usersearch({name: ''})
+            let res = await this.props.user.search({name: ''})
             if (res.data.length === 0) {
                 message.info('没有查询到数据')
             } else {
@@ -213,7 +217,7 @@ const App = (props) => {
                 })
             }
         } else {
-            let res = await props.user.usersearch({name: value.trim()})
+            let res = await props.user.search({name: value.trim()})
             if (res.data.length === 0) {
                 message.info('没有查询到数据')
             } else {

@@ -298,6 +298,7 @@ const App = (props) => {
     });
     const getAdminList=({limit})=>{
         props.admin.list({limit}).then(data=>{
+            //console.log(data)
             setData(data.data)
             data.data.map(item=>{
                 setAvatar('/api/'+item.avatar)
@@ -382,7 +383,9 @@ const App = (props) => {
         props.role.search({id:values.role_id}).then(data=>{
             //console.log(data.data)
             values.menuList = data.data.menuInfo
+            values.permissions = data.data.permissionList
             values.id=admin.id;
+            values.roleName = data.data.roleName
             props.admin.update(values).then(data=>{
                 if(data.status === 700){
                     message.success(data.msg)
