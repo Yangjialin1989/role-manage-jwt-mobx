@@ -1,34 +1,35 @@
 import {Component} from 'react'
-import {Input, Table, Popconfirm, message, Button,} from 'antd'
+import {Input, Table, Popconfirm, message, Space,} from 'antd'
 
 import {inject,observer} from 'mobx-react'
-import AddRole from "./AddRole";
-import EditTable1 from "../Table/EditTable1";
+import Upload from "../Upload/Upload";
+import UploadAvatar from "../Upload/UploadAvatar";
+import Tour from "../Tour/Tour";
 const {Search} = Input
 
-class RoleList extends Component{
+class EditAdmin extends Component{
 
     constructor(props) {
         super(props);
         this.state = {
-            visibeAddRoleModal:false,
             list:[],
             columns:[
                 {
-                    title:'角色名称',
-                    dataIndex:'roleName',
-                    key:'roleName'
-                },
-                // {
-                //     title:'权限列表',
-                //     dataIndex:'permissionList',
-                //     key:'permissionList'
-                // }
-                // ,
-                {
-                    title:'创建日期',
-                    dataIndex:'createdAt',
-                    key:'createdAt'
+                    title:'任务编码',
+                    dataIndex:'id',
+                    key:'id'
+                },{
+                    title:'注册用户',
+                    dataIndex:'name',
+                    key:'name'
+                },{
+                    title:'邮箱',
+                    dataIndex:'email',
+                    key:'email'
+                },{
+                    title:'电话',
+                    dataIndex:'telephone',
+                    key:'telephone'
                 },{
                     title:'操作',
                     dataIndex:'operation',
@@ -47,11 +48,11 @@ class RoleList extends Component{
         this.getInfo()
     }
     getInfo=()=>{
-        this.props.role.list().then(data=>{
+        this.props.user.userlist1().then(data=>{
             this.setState({
                 list:data.data
             })
-            //console.log(data.data)
+           // console.log(data.data)
         }
 
 
@@ -60,13 +61,13 @@ class RoleList extends Component{
 
     }
     handleDelete = async (record)=>{
-        //console.log(typeof(record))
+        console.log(typeof(record))
         await this.props.user.userdelete({id:record})
         this.getInfo()
     }
 
     onShowSizeChange(current){
-        //console.log(current)
+        console.log(current)
     }
     onSearch = async(value) => {
         //console.log('search',value)
@@ -80,7 +81,7 @@ class RoleList extends Component{
         //     })
         // }
         if(value === '') {
-            let res = await this.props.role.search({name: ''})
+            let res = await this.props.user.usersearch({name: ''})
             if (res.data.length === 0) {
                 message.info('没有查询到数据')
             } else {
@@ -90,7 +91,7 @@ class RoleList extends Component{
                 })
             }
         }else{
-            let res = await this.props.role.search({name: value.trim()})
+            let res = await this.props.user.usersearch({name: value.trim()})
             if (res.data.length === 0) {
                 message.info('没有查询到数据')
             } else {
@@ -110,21 +111,8 @@ class RoleList extends Component{
     onChange = (value)=>{
        //console.log(value)
     }
-    showAddRoleModal = ()=>{
-        this.setState({
-            visibeAddRoleModal:true
-        })
-    }
-    hideAddRoleModal = (refresh?:boolean)=>{
-        if(refresh){
-            this.getInfo()
-        }
-        this.setState({
-            visibeAddRoleModal:false
-        })
-    }
     render() {
-      //  let paginationProps;
+       // let paginationProps;
         // paginationProps ={
         //     current:1,
         //         pageSize:10,
@@ -135,20 +123,24 @@ class RoleList extends Component{
         return (
             <>
                 <h2>角色列表</h2>
-                <AddRole open={this.state.visibeAddRoleModal}
-                         callback={this.hideAddRoleModal}
-                ></AddRole>
-                <Button onClick={this.showAddRoleModal} type={'primary'}>添加角色</Button>
-                {/*<Search onChange={this.onChange} allowClear  onSearch={this.onSearch} size={'large'}></Search>*/}
 
-                {/*    <Table pagination={this.paginationProps}  loading={this.state.list.length !== 0 ? false : true} dataSource={this.state.list} columns={this.state.columns}>*/}
+                <Space>
+                    <Upload></Upload>
 
-                {/*</Table>*/}
-                <hr/>
-                <EditTable1 callback={this.hideAddRoleModal}></EditTable1>
+                </Space>
+                <Space>
+
+                    <UploadAvatar></UploadAvatar>
+                </Space>
+                <Search onChange={this.onChange} allowClear  onSearch={this.onSearch} size={'large'}></Search>
+
+                    <Table pagination={this.paginationProps}  loading={this.state.list.length !== 0 ? false : true} dataSource={this.state.list} columns={this.state.columns}>
+
+                </Table>
+                <Tour></Tour>
 
             </>
         )
     }
 }
-export default inject('role')(observer(RoleList))
+export default inject('user')(observer(EditAdmin))

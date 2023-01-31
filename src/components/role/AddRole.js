@@ -2,6 +2,7 @@ import React, {createRef} from 'react'
 import {Modal, Form, Input, Button, Space, Tree} from "antd";
 import {inject, observer} from "mobx-react";
 import {RefObject} from "react";
+import PermissionTree from '../Tree/PermissionTree'
 //context 组件通信
 //const {Provider,Consumer} = React.createContext()
 
@@ -29,6 +30,8 @@ class AddRole extends React.Component<IPropss>{
         this.state={
             treeplist:[],
             plist:[],
+            permissions:['0000'],
+            autoExpandParent:true,
             message:'this is message ',
             treeData:[
                 {
@@ -162,7 +165,7 @@ class AddRole extends React.Component<IPropss>{
                 permission.child = this.generatePermissionList(permission.child,permission.id)
                 pplist.push({
                     title:permission.title,
-                    key:permission.id,
+                    key:permission.key,
                     children:permission.child
                 })
             }
@@ -174,27 +177,131 @@ class AddRole extends React.Component<IPropss>{
 
 
     componentDidMount() {
-        this.props.user.userplist().then(data=>{
+        this.props.permission.list().then(data=>{
             //this.filterplist(data.data)
-            console.log('userplist',data.data)
+            let permissionList = []
+            let permission = []
+            let permission2 = []
+            let permission3 = []
+            let permission4 = []
+            data.data.map((item)=>{
+                if(item.isMenu !== 1){
+                    permissionList.push(item)
+                }
+            })
+            let child = []
+            let child2 = []
+            let child3 = []
+            let child4 = []
+
+            permissionList.map((item)=>{
+
+                if(item.parentId === 11){
+                    //console.log(item)
+                    child.push({
+                        title:item.title,
+                        key:item.key
+                    })
+                }
+                //console.log(child)
+                if(item.parentId === 0 && item.id ===11){
+
+                    permission.push({
+                        title:item.title,
+                        key:item.key,
+                        children:child
+                    })
+                }
+            })
+
+            permissionList.map((item)=>{
+
+                if(item.parentId === 22){
+                    console.log(item)
+                    child2.push({
+                        title:item.title,
+                        key:item.key
+                    })
+                }
+                //console.log(child)
+                if(item.parentId === 0 && item.id ===22){
+
+                    permission2.push({
+                        title:item.title,
+                        key:item.key,
+                        children:child2
+                    })
+                }
+            })
+            permissionList.map((item)=>{
+
+                if(item.parentId === 33){
+                    console.log(item)
+                    child3.push({
+                        title:item.title,
+                        key:item.key
+                    })
+                }
+                //console.log(child)
+                if(item.parentId === 0 && item.id ===33){
+
+                    permission3.push({
+                        title:item.title,
+                        key:item.key,
+                        children:child3
+                    })
+                }
+            })
+            permissionList.map((item)=>{
+
+                if(item.parentId === 44){
+                    console.log(item)
+                    child4.push({
+                        title:item.title,
+                        key:item.key
+                    })
+                }
+                //console.log(child)
+                if(item.parentId === 0 && item.id ===44){
+
+                    permission4.push({
+                        title:item.title,
+                        key:item.key,
+                        children:child4
+                    })
+                }
+            })
+            let pl = [...permission,...permission2,...permission3,...permission4]
+            console.log('userplist',pl)
             this.setState({
-                plist:this.generatePermissionList(data.data)
+                plist:pl
 
             })
 
         })
         let lists = window.localStorage.getItem('user')
-        console.log('tree',JSON.parse(lists).permissionInfo)
+        //console.log('tree',JSON.parse(lists).permissionInfo)
 
     }
 
     cancel = ()=>{
-        this.props.callback()
+        this.props.callback(true)
     }
     onFinish = (values) => {
-        console.log('AddRole ---',values)
-        this.props.user.userps(values).then(data=>{
+       // values.push({id:new Date().valueOf()})
+        let values1 = {
+            'permissionList':this.state.permissions[1],
+            'menuInfo':this.state.permissions[0],
+            'roleName':values.roleName,
+            'id':new Date().valueOf()
+        }
+        console.log('AddRole ---',values1)
+        this.props.role.save(values1).then(data=>{
             console.log(data)
+            this.cancel()
+            window.location.reload()
+
+
         })
     }
     onFinishFail = (errorInfo) => {
@@ -206,11 +313,11 @@ class AddRole extends React.Component<IPropss>{
         this.formRef.current.setFieldsValue({
             permissionList: checkedKeys.checked
         })
-        this.plist.map((item)=>{
-            if(item.key<100 && item.key === checkedKeys){
-                //item.children.key
-            }
-        })
+        // this.plist.map((item)=>{
+        //     if(item.key<100 && item.key === checkedKeys){
+        //         //item.children.key
+        //     }
+        // })
         //console.log(this.state.plist)
     };
     addRole = () =>{
@@ -222,6 +329,12 @@ class AddRole extends React.Component<IPropss>{
 
         console.log('selected', selectedKeys, info);
     };
+    getPermissions=(permissions)=>{
+        console.log(permissions)
+        this.setState({
+            permissions:permissions
+        })
+    }
     render() {
         return (
             <>
@@ -260,19 +373,22 @@ class AddRole extends React.Component<IPropss>{
                         >
                             <Input/>
                         </Form.Item>
-                        <Form.Item label={'选择权限'}
-                                   name={'permissionList'}
-                        >
-                            <Tree
-                                defaultExpandAll
-                                checkStrictly
-                                showLine
-                                checkable
-                                onCheck={this.onCheck}
-                                treeData={this.state.plist}
-                            />
+                        {/*<Form.Item label={'选择权限'}*/}
+                        {/*           name={'permissionList'}*/}
+                        {/*>*/}
+                        {/*    <Tree*/}
+                        {/*        defaultExpandAll*/}
+                        {/*        checkStrictly*/}
+                        {/*        showLine*/}
+                        {/*        checkable*/}
+                        {/*        autoExpandParent={this.state.autoExpandParent}*/}
+                        {/*        onCheck={this.onCheck}*/}
+                        {/*        treeData={this.state.plist}*/}
+                        {/*    />*/}
+                        {/*</Form.Item>*/}
+                        <Form.Item label={'选择权限'} name={'permissionList'}>
+                            <PermissionTree getPermissions={permissions=>this.getPermissions(permissions)}></PermissionTree>
                         </Form.Item>
-
                         <Form.Item {...tailLayout}>
                             <Space>
                                 <Button type={'primary'} htmlType={'submit'}>
@@ -292,4 +408,4 @@ class AddRole extends React.Component<IPropss>{
         )
     }
 }
-export default inject('user')(observer(AddRole))
+export default inject('role','permission')(observer(AddRole))

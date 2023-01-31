@@ -48,37 +48,40 @@ const EditableCell = ({
     );
 };
 const App = (props) => {
+    const [limit,setLimit]=useState(1)
     const [form] = Form.useForm();
     const [data, setData] = useState(originData);
     const [editingKey, setEditingKey] = useState('');
-    const isEditing = (record) => record._id === editingKey;
+    const isEditing = (record) => record.id === editingKey;
     const edit = (record) => {
         form.setFieldsValue({
-            roleName: '',
-            permissionList: '',
-            updatedAt: new Date(),
+            name: '',
+            email: '',
+            telephone: '',
             ...record,
         });
-        setEditingKey(record._id);
+        setEditingKey(record.id);
     };
-    const cancel = () => {
+    const cancel =async (page,pageSize) => {
+        await props.user.list1({limit:page}).then(data=>setData(data.data))
         setEditingKey('');
     };
     const handleDelete = async (record)=>{
         //console.log(typeof(record),record)
-        await props.user.userdelete({_id:record})
-        getInfo()
+        await props.user.delete({id:record,deletedAt:new Date()})
+        getUserList({limit})
     }
     const save = async (record) => {
         try {
             const row = await form.validateFields();
-            row.id = record._id;
+            row.id = record.id;
+            row.updatedAt = new Date()
             console.log(row)
-            await props.user.userupdate(row).then(data=>setData(data.data))
+            await props.user.update(row).then(data=>setData(data.data))
 
 
             const newData = [...data];
-            const index = newData.findIndex((item) => record._id === item._id);
+            const index = newData.findIndex((item) => record.id === item.id);
             if (index > -1) {
                 const item = newData[index];
                 newData.splice(index, 1, {
@@ -99,51 +102,26 @@ const App = (props) => {
     };
     const columns = [
         {
-            title: '唯一标识',
-            dataIndex: '_id',
-           // key: 'roleName',
-            width: '15%',
-            editable: false,
-        },
-        {
-            title: '权限名称',
-            dataIndex: 'roleName',
-           // key: 'roleName',
-            width: '15%',
+            title: '管理员',
+            dataIndex: 'name',
+            width: '25%',
             editable: true,
         },
         {
-            title: '权限列表',
-            dataIndex: 'permissionList',
-            //key: 'permissionList',
-            width: '15%',
+            title: '邮箱',
+            dataIndex: 'email',
+            width: '30%',
             editable: true,
         },
         {
-            title: '创建日期',
-            dataIndex: 'createdAt',
-           // key: 'createdAt',
-            width: '10%',
-            editable: false,
+            title: '电话',
+            dataIndex: 'telephone',
+            width: '30%',
+            editable: true,
         },
         {
-            title: '更新日期',
-            dataIndex: 'updatedAt',
-           // key: 'createdAt',
-            width: '10%',
-            editable: false,
-        },
-        {
-            title: '销毁日期',
-            dataIndex: 'deletedAt',
-           // key: 'createdAt',
-            width: '10%',
-            editable: false,
-        },
-        {
-            title: 'operation',
+            title: '操作',
             dataIndex: 'operation',
-            //key:'_id',
             render: (_, record) => {
                 const editable = isEditing(record);
                 return editable ? (
@@ -171,7 +149,7 @@ const App = (props) => {
                         <a>编辑</a>
                     </Typography.Link>
                     <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                    <Popconfirm  title="数据无价，您确定删除?" onConfirm={()=>handleDelete(record._id)} >
+                    <Popconfirm  title="数据无价，您确定删除?" onConfirm={()=>handleDelete(record.id)} >
                     <a style={{color:'red'}}>删除</a>
                     </Popconfirm>
                     </span>
@@ -195,20 +173,18 @@ const App = (props) => {
             ...col,
             onCell: (record) => ({
                 record,
-                //inputType: col.dataIndex === 'telephone' ? 'number' : 'text',
+                inputType: col.dataIndex === 'telephone' ? 'number' : 'text',
                 dataIndex: col.dataIndex,
                 title: col.title,
                 editing: isEditing(record),
             }),
         };
     });
-    const getInfo=()=>{
-        props.user.userpl().then(data=>{
-            setData(data.data)
+    const getUserList=({limit})=>{
+        props.user.list1({limit}).then(data=>{
             console.log(data)
-        }
-
-        )
+            setData(data.data)
+        })
 
 
 
@@ -217,7 +193,7 @@ const App = (props) => {
     }
 
     useEffect(() => {
-        getInfo()
+        getUserList({limit})
     }, []);
     const onSearch = async(value) => {
         //console.log('search',value)
@@ -231,7 +207,7 @@ const App = (props) => {
         //     })
         // }
         if (value === '') {
-            let res = await this.props.user.usersearch({name: ''})
+            let res = await this.props.user.search({name: ''})
             if (res.data.length === 0) {
                 message.info('没有查询到数据')
             } else {
@@ -241,7 +217,7 @@ const App = (props) => {
                 })
             }
         } else {
-            let res = await props.user.usersearch({name: value.trim()})
+            let res = await props.user.search({name: value.trim()})
             if (res.data.length === 0) {
                 message.info('没有查询到数据')
             } else {
@@ -269,6 +245,7 @@ const App = (props) => {
                 rowClassName="editable-row"
                 pagination={{
                     onChange: cancel,
+                    pageSize:15
                 }}
             />
         </Form>

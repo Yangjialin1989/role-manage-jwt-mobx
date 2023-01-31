@@ -22,6 +22,10 @@ import history from '../utils/history'
 //import {message} from "antd";
 //import Login from './Login'
 import Home from './Home'
+//////////////////////////////////////////////////////////////////
+
+
+
 function ToIndex(){
     const navigateTo = useNavigate()
 
@@ -58,10 +62,16 @@ function BeforeRouterEnter(){
     return <PrivateRouter/>
 }
 function App() {
+    useEffect(()=>{
+      // console.log('hello')
+
+    },)
   return (
       <div>
         <Router history={history}>
-         <BeforeRouterEnter></BeforeRouterEnter>
+
+                <BeforeRouterEnter></BeforeRouterEnter>
+
         </Router>
       </div>
   );

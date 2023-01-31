@@ -5,34 +5,72 @@ import cookie from 'react-cookies'
 const axios = Axios.create({
     //baseURL:'/dev-api',
     baseURL:'/api',
+    // baseURL:'http://127.0.0.1:6006',
     timeout:20000
 });
 
-
+let flag = true;
 
 
 //拦截器Axios发送的所有请求，通过dispatch修改isLoading为true
 axios.interceptors.request.use(
     request=>{
+        let url = request.url ? request.url :'';
+        let permissions= JSON.parse(window.localStorage.getItem('admin'))// let permissionsList = []
 
-        //需要把token添加到header
-        const token = window.localStorage.getItem('token');
-       // const refresh_token = window.localStorage.getItem('refresh_token');
-       // const status = window.localStorage.getItem('status')
+        //
+        // console.log('axios拦截器-请求：', url,permissionsList)
+        if(permissions){
+            let permissionsList = []
+            permissions.permissions.map((item)=>{
+                if(item.apiPath && item.apiPath !== ''){
+                    permissionsList.push(item.apiPath)
+                }
+            })
+            flag = permissionsList.includes(url)
+            console.log(url,permissionsList)
+            if(flag){
+                //需要把token添加到header
+                const token = window.localStorage.getItem('token');
+                // const refresh_token = window.localStorage.getItem('refresh_token');
+                // const status = window.localStorage.getItem('status')
 
 
 
-        if(token){
-            //request.headers['Authorization'] = `Bearer ${token}`
-            request.headers = {
-               // 'Content-Type':'application/json',
-                //'Authorization':"Bearer "+token
-                'Authorization':'Bearer '+token,
-                //'Access-Control-Allow-Origin':'*'
+                if(token){
+                    //request.headers['Authorization'] = `Bearer ${token}`
+                    request.headers = {
+                        // 'Content-Type':'application/json',
+                        //'Authorization':"Bearer "+token
+                        'Authorization':'Bearer '+token,
+                        //'Access-Control-Allow-Origin':'*'
+                    }
+
+                }
+
+            }else{
+                message.error('您没有权限')
             }
-
         }
 
+       //  //需要把token添加到header
+       //  const token = window.localStorage.getItem('token');
+       // // const refresh_token = window.localStorage.getItem('refresh_token');
+       // // const status = window.localStorage.getItem('status')
+       //
+       //
+       //
+       //  if(token){
+       //      //request.headers['Authorization'] = `Bearer ${token}`
+       //      request.headers = {
+       //         // 'Content-Type':'application/json',
+       //          //'Authorization':"Bearer "+token
+       //          'Authorization':'Bearer '+token,
+       //          //'Access-Control-Allow-Origin':'*'
+       //      }
+       //
+       //  }
+       //
 
 
         return request;
@@ -78,7 +116,7 @@ axios.interceptors.response.use(
                     if(flag) {
                         if (difference < 60) {
                             const refresh_token = window.localStorage.getItem('refresh_token');
-                            Axios.post('/api/users/refreshtoken', {}, {
+                            Axios.post('/api/admins/refreshtoken', {}, {
                                 headers: {
                                     'Authorization': 'Bearer ' + refresh_token
                                 },
@@ -102,7 +140,7 @@ axios.interceptors.response.use(
                 if(flag){
                     if(difference<1600){
                         const refresh_token = window.localStorage.getItem('refresh_token');
-                        Axios.post('/api/users/refreshtoken',{},{
+                        Axios.post('/api/admins/refreshtoken',{},{
                             headers:{
                                 'Authorization':'Bearer '+refresh_token
                             },
@@ -120,49 +158,12 @@ axios.interceptors.response.use(
                     }
             }
 
-
-
-
-
-
-
-
-
-
-
-
-
-                    //let flag = true;
-
-                    // let msg = '令牌还有'+difference+'s过期'
-                    //message.info(msg)
-                    // const refresh_token = window.localStorage.getItem('refresh_token');
-                    // Axios.post('/api/users/refreshtoken',{},{
-                    //     headers:{
-                    //         'Authorization':'Bearer '+refresh_token
-                    //     }
-                    // }).then((data=>{
-                    //     if(data.data.code === 100){
-                    //
-                    //
-                    //
-                    //     }else{
-                    //         let exp = cookie.load('exp')
-                    //         console.log('exp')
-                    //     }
-                    //
-                    //
-                    // }))
-                    //
-
-
-
-
                 }
 
 
 
-            if(response.data.token){
+            if(response.data.token && response.data.token !== null){
+                console.log('jinlaile....')
                 window.localStorage.setItem('token', response.data.token);
                 window.localStorage.setItem('refresh_token', response.data.refresh_token);
                 //判断refresh_token过期，提示
@@ -239,26 +240,30 @@ axios.interceptors.response.use(
                         //    //
                         // }))
 
+                    if(flag){
+                        cookie.remove('exp')
+                        cookie.remove('difference')
+                        window.localStorage.removeItem('refresh_token');
+                        window.localStorage.removeItem('token');
+                        history.replace('/result401');
+                        window.location.reload();
+
+                        //window.localStorage.setItem('status',401)
+                        //message.error('您暂时没有权限。')
+
+                        // setTimeout(()=>{
+                        //
+                        //     //history.go(-1)
+                        //     window.location.reload()
+                        //
+                        // },1000);
+
+                        break;
+                    }else{
+                        break;
+                    }
 
 
-                    cookie.remove('exp')
-                    cookie.remove('difference')
-                    window.localStorage.removeItem('refresh_token');
-                    window.localStorage.removeItem('token');
-                    history.replace('/result401');
-                    window.location.reload();
-
-                    //window.localStorage.setItem('status',401)
-                    //message.error('您暂时没有权限。')
-
-                    // setTimeout(()=>{
-                    //
-                    //     //history.go(-1)
-                    //     window.location.reload()
-                    //
-                    // },1000);
-
-                    break;
 
 
                     //504 网络错误

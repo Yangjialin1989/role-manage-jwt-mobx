@@ -1,14 +1,35 @@
 //import React from "@types/react";
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import './Welcome.css'
 import {inject,observer} from "mobx-react";
-import UserTable from "../Table/UserTable";
-import {Button, Modal, Form, Input, Space,message} from "antd";
+import AdminTable from "../Table/AdminTable";
+import {Button, Modal, Form, Input,Select, Space,message} from "antd";
 import Tree from '../Tree/Tree'
-function UserList (props){
-    const [form] = Form.useForm()
-    const [isModalOpen, setIsModalOpen] = useState(false);
+function AdminList (props){
+    useEffect(() => {
+        console.log('adminlist进来了')
+        props.role.list().then(data=>{
+            console.log(data.data)
+            setRoles(data.data)
+            let list = []
+            data.data.map(item=>{
+                list.push({
+                    value:item.id,
+                    label:item.roleName
+                })
+            })
+            setRoleOption(list)
 
+        })
+
+    }, []);
+   // const [limit,setLimit]=useState(1)
+    const [form] = Form.useForm()
+    const [roles,setRoles]=useState([])
+    const [roleOptions,setRoleOption]=useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [menuList,setMenuList]=useState([])
+    const [permissions,setPermissions]=useState([])
     const showModal = () => {
         setIsModalOpen(true);
     };
@@ -21,14 +42,29 @@ function UserList (props){
         setIsModalOpen(false);
     };
     const onFinish = async(values)=>{
-        let {code,msg} = await props.user.register(values)
-        if(code === 200){
-            message.success(msg)
-            form.resetFields();
+        console.log(roles)
+        props.role.search({id:values.role_id}).then(data=>{
+            console.log(data.data)
+            values.menuList = data.data.menuInfo
+            values.permissions = data.data.permissionList
+            values.roleName = data.data.roleName
+            setMenuList(data.data.menuInfo)
+            props.admin.register(values).then(data=>{
+                if(data.code === 200){
+                    message.success(data.msg)
+                    form.resetFields();
+                    window.location.reload();
+                }
+                if(data.code === 101){message.error(data.msg)}
+            })
 
-            window.location.reload();
-        }
-        if(code === 101){message.error(msg)}
+        })
+        console.log(menuList)
+        //alert(data)
+        //console.log(data.data.menuInfo)
+        //setMenuList()
+
+
     }
     const onFinishFailed =  (errorInfo: any) => {
         console.log('Failed:', errorInfo);
@@ -38,13 +74,21 @@ function UserList (props){
     };
 
 
-
+   async function validName(value) {
+    console.log(value)
+        let {code,msg} =  await props.admin.valid({value})
+        if(code === 300){
+            return Promise.resolve()
+        }else if(code === 102){
+            return Promise.reject(msg)
+        }
+    }
 
     return (
         <>
 
 
-            <Modal title="添加用户" open={isModalOpen} footer={null}  onCancel={handleCancel}>
+            <Modal title="添加管理员" open={isModalOpen} footer={null}  onCancel={handleCancel}>
                 <Form
                     labelCol={{
                         span: 4,
@@ -52,14 +96,13 @@ function UserList (props){
                     wrapperCol={{
                         span: 20,
                     }}
-
                     form={form}
                     name={'registUser'}
                     onFinish={onFinish}
                     onFinishFailed={onFinishFailed}
                         >
                     <Form.Item
-                        label="用户名"
+                        label="管理员名"
                         name="name"
 
                         rules={[
@@ -72,9 +115,9 @@ function UserList (props){
                             ({ getFieldValue }) => ({
                                 async validator(rule, value) {
                                     let name = getFieldValue('name')
-                                    let {code,msg} =  await props.user.valid({name})
+                                    let {code,msg} =  await props.admin.valid({name})
                                     if(code === 300){
-                                        return Promise.resolve()
+                                        return Promise.resolve(msg)
                                     }else if(code === 102){
                                         return Promise.reject(msg)
                                     }
@@ -82,7 +125,10 @@ function UserList (props){
                             })
                         ]}
                     >
-                        <Input  placeholder={'请添加用户名'}/>
+                        <Input placeholder={'请添加用户名'}/>
+                    </Form.Item>
+                    <Form.Item label={'等级'} name={'role_id'}>
+                        <Select options={roleOptions}></Select>
                     </Form.Item>
                     <Form.Item
                         label="密码"
@@ -136,13 +182,13 @@ function UserList (props){
                 </Form>
             </Modal>
 
-                <Button type={'primary'} onClick={showModal}>添加用户</Button>
+                <Button type={'primary'} onClick={showModal}>添加管理员</Button>
 <hr/>
-            <UserTable></UserTable>
+            <AdminTable></AdminTable>
 
 
         </>
     )
 
 }
-export default inject('user')(observer(UserList))
+export default inject('admin','user','permission','role')(observer(AdminList))

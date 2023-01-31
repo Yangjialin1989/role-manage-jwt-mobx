@@ -18,15 +18,16 @@ function Login(props) {
         console.log('Success:', values);
         //后台验证用户名、密码，通过，跳转到首页，失败，提示错误
         //在store中进行，通过mobx 中的action进行。
-        props.user.login(values).then((data)=>{
+        props.admin.login(values).then((data)=>{
             if(data.code === 200){
                 message.success(data.msg)
                //navigate('/index/welecome')
                history.replace('/index/welecome')
                window.location.reload()
             }else{
+                //console.log('jinlaile')
                 message.warning(data.msg)
-                navigate('/login')
+                //navigate('/login')
             }
         }).catch((err)=>{
                 message.error(err)
@@ -108,4 +109,4 @@ function Login(props) {
 
     )
 }
-export default inject('user')(observer(Login))
+export default inject('admin')(observer(Login))

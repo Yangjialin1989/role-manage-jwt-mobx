@@ -10,13 +10,13 @@ module.exports = function (app) {
             }
         }),
         //
-        createProxyMiddleware('/dev-api',{
-            target: 'http://127.0.0.1:6006',
-            changeOrigin: true,
-            pathRewrite: {
-                '^/dev-api': '',
-            }
-        })
+        // createProxyMiddleware('/dev-api',{
+        //     target: 'http://127.0.0.1:6006',
+        //     changeOrigin: true,
+        //     pathRewrite: {
+        //         '^/dev-api': '',
+        //     }
+        // })
     );
 
 };
